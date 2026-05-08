@@ -5,7 +5,7 @@ const colorMode = useColorMode()
 </script>
 
 <template>
-  <div class="min-h-screen flex flex-col items-center justify-center bg-(--ui-bg) p-4">
+  <div class="min-h-screen flex flex-col items-center justify-center bg-default p-4">
     <!-- Theme toggle -->
     <div class="absolute top-4 right-4">
       <UButton
@@ -23,12 +23,12 @@ const colorMode = useColorMode()
         name="i-lucide-zap"
         class="w-8 h-8 text-amber-500"
       />
-      <span class="font-bold text-2xl text-(--ui-text)">Kickerliste</span>
+      <span class="font-bold text-2xl text-default">Kickerliste</span>
     </div>
 
     <slot />
 
-    <p class="mt-8 text-xs text-(--ui-text-dimmed)">
+    <p class="mt-8 text-xs text-dimmed">
       Büro-Kicker Ergebnisverfolgung
     </p>
   </div>

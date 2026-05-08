@@ -58,7 +58,7 @@ function resultColor(result: string): 'success' | 'neutral' {
           name="i-lucide-calendar-days"
           class="w-6 h-6 text-amber-500"
         />
-        <h1 class="text-2xl font-bold text-(--ui-text)">
+        <h1 class="text-2xl font-bold text-default">
           Spielpläne
         </h1>
       </div>
@@ -79,7 +79,7 @@ function resultColor(result: string): 'success' | 'neutral' {
       <div
         v-for="i in 4"
         :key="i"
-        class="h-20 rounded-xl bg-(--ui-bg-elevated) animate-pulse"
+        class="h-20 rounded-xl bg-elevated animate-pulse"
       />
     </div>
 
@@ -112,15 +112,15 @@ function resultColor(result: string): 'success' | 'neutral' {
       <UCard
         v-for="f in sorted"
         :key="f.id"
-        class="hover:bg-(--ui-bg-accented) transition-colors"
+        class="hover:bg-accented transition-colors"
       >
         <div class="flex items-center gap-4">
           <!-- Date + Value -->
           <div class="shrink-0 text-center w-16">
-            <p class="text-xs text-(--ui-text-dimmed) font-medium">
+            <p class="text-xs text-dimmed font-medium">
               {{ formatDate(f.playedAt) }}
             </p>
-            <p class="text-xs text-(--ui-text-dimmed) mt-0.5">
+            <p class="text-xs text-dimmed mt-0.5">
               Wert: {{ f.value }}
             </p>
           </div>
@@ -136,16 +136,16 @@ function resultColor(result: string): 'success' | 'neutral' {
               <span
                 :class="[
                   'font-semibold text-sm truncate',
-                  f.result === 'team_1' ? 'text-amber-500' : 'text-(--ui-text)'
+                  f.result === 'team_1' ? 'text-amber-500' : 'text-default'
                 ]"
               >
                 {{ teamName(f.team1Id) }}
               </span>
-              <span class="text-(--ui-text-dimmed) text-sm shrink-0">vs</span>
+              <span class="text-dimmed text-sm shrink-0">vs</span>
               <span
                 :class="[
                   'font-semibold text-sm truncate',
-                  f.result === 'team_2' ? 'text-amber-500' : 'text-(--ui-text)'
+                  f.result === 'team_2' ? 'text-amber-500' : 'text-default'
                 ]"
               >
                 {{ teamName(f.team2Id) }}
@@ -157,9 +157,9 @@ function resultColor(result: string): 'success' | 'neutral' {
               v-if="f.team1Score !== null && f.team2Score !== null"
               class="flex items-center gap-2 mt-1"
             >
-              <span class="text-lg font-bold tabular-nums text-(--ui-text)">{{ f.team1Score }}</span>
-              <span class="text-(--ui-text-dimmed) text-sm">:</span>
-              <span class="text-lg font-bold tabular-nums text-(--ui-text)">{{ f.team2Score }}</span>
+              <span class="text-lg font-bold tabular-nums text-default">{{ f.team1Score }}</span>
+              <span class="text-dimmed text-sm">:</span>
+              <span class="text-lg font-bold tabular-nums text-default">{{ f.team2Score }}</span>
             </div>
           </div>
 
@@ -178,7 +178,7 @@ function resultColor(result: string): 'success' | 'neutral' {
     <!-- Empty -->
     <div
       v-else
-      class="text-center py-16 text-(--ui-text-muted)"
+      class="text-center py-16 text-muted"
     >
       <UIcon
         name="i-lucide-calendar-days"

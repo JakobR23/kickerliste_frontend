@@ -37,7 +37,7 @@ watch(route, () => {
 </script>
 
 <template>
-  <div class="flex h-screen overflow-hidden bg-(--ui-bg) text-(--ui-text)">
+  <div class="flex h-screen overflow-hidden bg-default text-default">
     <!-- Mobile overlay -->
     <Transition name="fade">
       <div
@@ -51,8 +51,8 @@ watch(route, () => {
     <aside
       :class="[
         'fixed lg:relative z-30 flex flex-col h-screen',
-        'border-r border-(--ui-border)',
-        'bg-(--ui-bg-elevated)',
+        'border-r border-default',
+        'bg-elevated',
         'transition-all duration-300 ease-in-out',
         'w-64',
         sidebarCollapsed ? 'lg:w-16' : 'lg:w-64',
@@ -62,7 +62,7 @@ watch(route, () => {
       <!-- Logo -->
       <div
         :class="[
-          'flex items-center gap-3 px-4 py-4 border-b border-(--ui-border) shrink-0',
+          'flex items-center gap-3 px-4 py-4 border-b border-default shrink-0',
           sidebarCollapsed ? 'lg:justify-center lg:px-0' : ''
         ]"
       >
@@ -92,7 +92,7 @@ watch(route, () => {
               sidebarCollapsed ? 'lg:justify-center lg:px-0' : '',
               isActive(item.to)
                 ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
-                : 'text-(--ui-text-muted) hover:bg-(--ui-bg-accented) hover:text-(--ui-text)'
+                : 'text-muted hover:bg-accented hover:text-default'
             ]"
           >
             <UIcon
@@ -108,7 +108,7 @@ watch(route, () => {
           <div class="pt-4 pb-1">
             <p
               :class="[
-                'px-3 text-xs font-semibold uppercase tracking-wider text-(--ui-text-dimmed)',
+                'px-3 text-xs font-semibold uppercase tracking-wider text-dimmed',
                 sidebarCollapsed ? 'lg:hidden' : ''
               ]"
             >
@@ -116,7 +116,7 @@ watch(route, () => {
             </p>
             <div
               v-if="sidebarCollapsed"
-              class="hidden lg:block mx-3 mt-2 border-t border-(--ui-border)"
+              class="hidden lg:block mx-3 mt-2 border-t border-default"
             />
           </div>
 
@@ -132,7 +132,7 @@ watch(route, () => {
                 sidebarCollapsed ? 'lg:justify-center lg:px-0' : '',
                 isActive(item.to)
                   ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
-                  : 'text-(--ui-text-muted) hover:bg-(--ui-bg-accented) hover:text-(--ui-text)'
+                  : 'text-muted hover:bg-accented hover:text-default'
               ]"
             >
               <UIcon
@@ -146,14 +146,14 @@ watch(route, () => {
       </nav>
 
       <!-- Bottom section -->
-      <div class="border-t border-(--ui-border) p-2 space-y-0.5 shrink-0">
+      <div class="border-t border-default p-2 space-y-0.5 shrink-0">
         <!-- Color mode toggle -->
         <button
           :title="sidebarCollapsed ? (colorMode.value === 'dark' ? 'Hellmodus' : 'Dunkelmodus') : undefined"
           :class="[
             'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-sm font-medium w-full',
             sidebarCollapsed ? 'lg:justify-center lg:px-0' : '',
-            'text-(--ui-text-muted) hover:bg-(--ui-bg-accented) hover:text-(--ui-text)'
+            'text-muted hover:bg-accented hover:text-default'
           ]"
           @click="colorMode.preference = colorMode.value === 'dark' ? 'light' : 'dark'"
         >
@@ -175,13 +175,13 @@ watch(route, () => {
             sidebarCollapsed ? 'lg:justify-center lg:px-0' : '',
             isActive('/profile')
               ? 'bg-amber-500/15 text-amber-600 dark:text-amber-400'
-              : 'text-(--ui-text-muted) hover:bg-(--ui-bg-accented) hover:text-(--ui-text)'
+              : 'text-muted hover:bg-accented hover:text-default'
           ]"
         >
           <UAvatar
             :alt="auth.claims.value?.username ?? '?'"
             size="xs"
-            class="shrink-0 ring-1 ring-(--ui-border)"
+            class="shrink-0 ring-1 ring-default"
           />
           <span :class="['truncate', sidebarCollapsed ? 'lg:hidden' : '']">
             {{ auth.claims.value?.username }}
@@ -194,7 +194,7 @@ watch(route, () => {
           :class="[
             'flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-sm font-medium w-full',
             sidebarCollapsed ? 'lg:justify-center lg:px-0' : '',
-            'text-(--ui-text-muted) hover:bg-red-500/10 hover:text-red-500 dark:hover:text-red-400'
+            'text-muted hover:bg-red-500/10 hover:text-red-500 dark:hover:text-red-400'
           ]"
           @click="logout"
         >
@@ -210,7 +210,7 @@ watch(route, () => {
           :class="[
             'hidden lg:flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors text-sm font-medium w-full',
             sidebarCollapsed ? 'justify-center px-0' : '',
-            'text-(--ui-text-dimmed) hover:bg-(--ui-bg-accented) hover:text-(--ui-text)'
+            'text-dimmed hover:bg-accented hover:text-default'
           ]"
           @click="sidebarCollapsed = !sidebarCollapsed"
         >
@@ -229,7 +229,7 @@ watch(route, () => {
     <!-- Main content area -->
     <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
       <!-- Mobile top bar -->
-      <header class="lg:hidden flex items-center gap-3 px-4 py-3 border-b border-(--ui-border) bg-(--ui-bg-elevated) shrink-0">
+      <header class="lg:hidden flex items-center gap-3 px-4 py-3 border-b border-default bg-elevated shrink-0">
         <UButton
           icon="i-lucide-menu"
           variant="ghost"

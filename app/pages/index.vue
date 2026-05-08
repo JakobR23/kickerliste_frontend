@@ -31,7 +31,7 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
         name="i-lucide-trophy"
         class="w-6 h-6 text-amber-500"
       />
-      <h1 class="text-2xl font-bold text-(--ui-text)">
+      <h1 class="text-2xl font-bold text-default">
         Rangliste
       </h1>
     </div>
@@ -44,7 +44,7 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
       <div
         v-for="i in 5"
         :key="i"
-        class="h-16 rounded-xl bg-(--ui-bg-elevated) animate-pulse"
+        class="h-16 rounded-xl bg-elevated animate-pulse"
       />
     </div>
 
@@ -81,7 +81,7 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
           'flex items-center gap-4 px-4 py-3 rounded-xl border transition-colors',
           index === 0
             ? 'bg-amber-500/10 border-amber-500/30'
-            : 'bg-(--ui-bg-elevated) border-(--ui-border) hover:bg-(--ui-bg-accented)'
+            : 'bg-elevated border-default hover:bg-accented'
         ]"
       >
         <!-- Rank -->
@@ -93,7 +93,7 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
           />
           <span
             v-else
-            class="text-sm font-semibold text-(--ui-text-dimmed)"
+            class="text-sm font-semibold text-dimmed"
           >
             {{ index + 1 }}
           </span>
@@ -103,13 +103,13 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
         <UAvatar
           :alt="user.username"
           size="sm"
-          class="shrink-0 ring-1 ring-(--ui-border)"
+          class="shrink-0 ring-1 ring-default"
         />
         <div class="flex-1 min-w-0">
-          <p class="font-semibold text-(--ui-text) truncate">
+          <p class="font-semibold text-default truncate">
             {{ user.username }}
           </p>
-          <p class="text-xs text-(--ui-text-muted)">
+          <p class="text-xs text-muted">
             <UBadge
               v-if="user.role === 'admin'"
               label="Admin"
@@ -125,12 +125,12 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
           <p
             :class="[
               'text-xl font-bold tabular-nums',
-              index === 0 ? 'text-amber-500' : 'text-(--ui-text)'
+              index === 0 ? 'text-amber-500' : 'text-default'
             ]"
           >
             {{ formatScore(user.totalScore) }}
           </p>
-          <p class="text-xs text-(--ui-text-dimmed)">
+          <p class="text-xs text-dimmed">
             Punkte
           </p>
         </div>
@@ -140,7 +140,7 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
     <!-- Empty -->
     <div
       v-else
-      class="text-center py-16 text-(--ui-text-muted)"
+      class="text-center py-16 text-muted"
     >
       <UIcon
         name="i-lucide-users"

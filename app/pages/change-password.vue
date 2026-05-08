@@ -50,12 +50,12 @@ async function onSubmit() {
   <UCard class="w-full max-w-sm">
     <template #header>
       <div>
-        <h1 class="text-xl font-semibold text-(--ui-text)">
+        <h1 class="text-xl font-semibold text-default">
           Passwort ändern
         </h1>
         <p
           v-if="isForced"
-          class="text-sm text-(--ui-text-muted) mt-1"
+          class="text-sm text-muted mt-1"
         >
           Bitte lege ein neues Passwort fest, bevor du fortfährst.
         </p>

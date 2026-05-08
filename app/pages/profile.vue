@@ -75,7 +75,7 @@ function formatDate(iso: string): string {
         name="i-lucide-user"
         class="w-6 h-6 text-amber-500"
       />
-      <h1 class="text-2xl font-bold text-(--ui-text)">
+      <h1 class="text-2xl font-bold text-default">
         Profil
       </h1>
     </div>
@@ -86,10 +86,10 @@ function formatDate(iso: string): string {
         <UAvatar
           :alt="user?.username ?? '?'"
           size="lg"
-          class="ring-2 ring-(--ui-border)"
+          class="ring-2 ring-default"
         />
         <div class="flex-1 min-w-0">
-          <p class="text-xl font-bold text-(--ui-text) truncate">
+          <p class="text-xl font-bold text-default truncate">
             {{ user?.username }}
           </p>
           <div class="flex items-center gap-2 mt-1">
@@ -100,11 +100,11 @@ function formatDate(iso: string): string {
             />
           </div>
         </div>
-        <div class="text-right flex-shrink-0">
+        <div class="text-right shrink-0">
           <p class="text-3xl font-bold text-amber-500 tabular-nums">
             {{ user ? formatScore(user.totalScore) : '–' }}
           </p>
-          <p class="text-xs text-(--ui-text-dimmed)">
+          <p class="text-xs text-dimmed">
             Punkte gesamt
           </p>
         </div>
@@ -114,7 +114,7 @@ function formatDate(iso: string): string {
     <!-- Change password -->
     <UCard>
       <template #header>
-        <h2 class="font-semibold text-(--ui-text)">
+        <h2 class="font-semibold text-default">
           Passwort ändern
         </h2>
       </template>
@@ -183,7 +183,7 @@ function formatDate(iso: string): string {
     <!-- Score adjustment history (admin only) -->
     <UCard v-if="auth.isAdmin.value && adjustments?.length">
       <template #header>
-        <h2 class="font-semibold text-(--ui-text)">
+        <h2 class="font-semibold text-default">
           Punktekorrekturen
         </h2>
       </template>
@@ -191,19 +191,19 @@ function formatDate(iso: string): string {
         <div
           v-for="adj in adjustments"
           :key="adj.id"
-          class="flex items-start gap-3 py-2 border-b border-(--ui-border) last:border-0"
+          class="flex items-start gap-3 py-2 border-b border-default last:border-0"
         >
           <UBadge
             :label="adj.amount > 0 ? `+${adj.amount}` : String(adj.amount)"
             :color="adj.amount > 0 ? 'success' : 'error'"
             variant="soft"
-            class="flex-shrink-0 mt-0.5"
+            class="shrink-0 mt-0.5"
           />
           <div class="flex-1 min-w-0">
-            <p class="text-sm text-(--ui-text)">
+            <p class="text-sm text-default">
               {{ adj.reason }}
             </p>
-            <p class="text-xs text-(--ui-text-dimmed)">
+            <p class="text-xs text-dimmed">
               {{ formatDate(adj.createdAt) }}
             </p>
           </div>

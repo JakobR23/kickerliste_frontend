@@ -95,7 +95,7 @@ async function onSubmit() {
         name="i-lucide-plus-circle"
         class="w-6 h-6 text-amber-500"
       />
-      <h1 class="text-2xl font-bold text-(--ui-text)">
+      <h1 class="text-2xl font-bold text-default">
         Spiel einreichen
       </h1>
     </div>
@@ -103,7 +103,7 @@ async function onSubmit() {
     <UCard>
       <div
         v-if="teamsLoading"
-        class="py-8 text-center text-(--ui-text-muted)"
+        class="py-8 text-center text-muted"
       >
         <UIcon
           name="i-lucide-loader-2"

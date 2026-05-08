@@ -132,7 +132,7 @@ function formatScore(score: number): string {
         name="i-lucide-users"
         class="w-6 h-6 text-amber-500"
       />
-      <h1 class="text-2xl font-bold text-(--ui-text) truncate">
+      <h1 class="text-2xl font-bold text-default truncate">
         {{ team?.name ?? `Team #${teamId}` }}
       </h1>
       <UButton
@@ -148,7 +148,7 @@ function formatScore(score: number): string {
     <UCard>
       <template #header>
         <div class="flex items-center justify-between">
-          <h2 class="font-semibold text-(--ui-text)">
+          <h2 class="font-semibold text-default">
             Mitglieder ({{ members?.length ?? 0 }}/2)
           </h2>
           <UButton
@@ -175,13 +175,13 @@ function formatScore(score: number): string {
           <UAvatar
             :alt="member.username"
             size="sm"
-            class="ring-1 ring-(--ui-border)"
+            class="ring-1 ring-default"
           />
           <div class="flex-1 min-w-0">
-            <p class="font-medium text-(--ui-text) truncate">
+            <p class="font-medium text-default truncate">
               {{ member.username }}
             </p>
-            <p class="text-xs text-(--ui-text-dimmed)">
+            <p class="text-xs text-dimmed">
               {{ formatScore(member.totalScore) }} Punkte
             </p>
           </div>
@@ -198,7 +198,7 @@ function formatScore(score: number): string {
 
       <div
         v-else
-        class="py-6 text-center text-(--ui-text-muted)"
+        class="py-6 text-center text-muted"
       >
         <UIcon
           name="i-lucide-user-x"
@@ -275,7 +275,7 @@ function formatScore(score: number): string {
         </UFormField>
         <p
           v-if="availableUsers.length === 0"
-          class="text-sm text-(--ui-text-muted) mt-2"
+          class="text-sm text-muted mt-2"
         >
           Keine weiteren Spieler verfügbar.
         </p>

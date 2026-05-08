@@ -44,7 +44,7 @@ async function onSubmit() {
 <template>
   <UCard class="w-full max-w-sm">
     <template #header>
-      <h1 class="text-xl font-semibold text-(--ui-text)">
+      <h1 class="text-xl font-semibold text-default">
         Registrieren
       </h1>
     </template>
@@ -113,7 +113,7 @@ async function onSubmit() {
     </form>
 
     <template #footer>
-      <p class="text-sm text-center text-(--ui-text-muted)">
+      <p class="text-sm text-center text-muted">
         Bereits ein Konto?
         <NuxtLink
           to="/login"

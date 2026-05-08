@@ -54,7 +54,7 @@ function formatDate(iso: string): string {
           name="i-lucide-users"
           class="w-6 h-6 text-amber-500"
         />
-        <h1 class="text-2xl font-bold text-(--ui-text)">
+        <h1 class="text-2xl font-bold text-default">
           Teams
         </h1>
       </div>
@@ -75,7 +75,7 @@ function formatDate(iso: string): string {
       <div
         v-for="i in 3"
         :key="i"
-        class="h-28 rounded-xl bg-(--ui-bg-elevated) animate-pulse"
+        class="h-28 rounded-xl bg-elevated animate-pulse"
       />
     </div>
 
@@ -111,7 +111,7 @@ function formatDate(iso: string): string {
         :to="`/teams/${team.id}`"
         class="block"
       >
-        <UCard class="hover:bg-(--ui-bg-accented) transition-colors cursor-pointer h-full">
+        <UCard class="hover:bg-accented transition-colors cursor-pointer h-full">
           <div class="flex items-start gap-3">
             <div class="w-10 h-10 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
               <UIcon
@@ -120,16 +120,16 @@ function formatDate(iso: string): string {
               />
             </div>
             <div class="flex-1 min-w-0">
-              <p class="font-semibold text-(--ui-text) truncate">
+              <p class="font-semibold text-default truncate">
                 {{ team.name ?? `Team #${team.id}` }}
               </p>
-              <p class="text-xs text-(--ui-text-dimmed) mt-1">
+              <p class="text-xs text-dimmed mt-1">
                 Erstellt: {{ formatDate(team.created_at) }}
               </p>
             </div>
             <UIcon
               name="i-lucide-chevron-right"
-              class="w-4 h-4 text-(--ui-text-dimmed) shrink-0 mt-1"
+              class="w-4 h-4 text-dimmed shrink-0 mt-1"
             />
           </div>
         </UCard>
@@ -139,7 +139,7 @@ function formatDate(iso: string): string {
     <!-- Empty -->
     <div
       v-else
-      class="text-center py-16 text-(--ui-text-muted)"
+      class="text-center py-16 text-muted"
     >
       <UIcon
         name="i-lucide-users"
@@ -174,7 +174,7 @@ function formatDate(iso: string): string {
             @keydown.enter="createTeam"
           />
         </UFormField>
-        <p class="text-xs text-(--ui-text-muted) mt-2">
+        <p class="text-xs text-muted mt-2">
           Leer lassen für ein namenloses Team.
         </p>
       </template>

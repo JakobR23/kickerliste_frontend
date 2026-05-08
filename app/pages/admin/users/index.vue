@@ -198,7 +198,7 @@ function formatDate(iso: string): string {
           name="i-lucide-user-cog"
           class="w-6 h-6 text-amber-500"
         />
-        <h1 class="text-2xl font-bold text-(--ui-text)">
+        <h1 class="text-2xl font-bold text-default">
           Benutzerverwaltung
         </h1>
       </div>
@@ -216,17 +216,17 @@ function formatDate(iso: string): string {
       <div
         v-for="user in sorted"
         :key="user.id"
-        class="flex items-center gap-4 px-4 py-3 rounded-xl border border-(--ui-border) bg-(--ui-bg-elevated) hover:bg-(--ui-bg-accented) transition-colors"
+        class="flex items-center gap-4 px-4 py-3 rounded-xl border border-default bg-elevated hover:bg-accented transition-colors"
       >
         <UAvatar
           :alt="user.username"
           size="sm"
-          class="ring-1 ring-(--ui-border) shrink-0"
+          class="ring-1 ring-default shrink-0"
         />
 
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2">
-            <p class="font-semibold text-(--ui-text) truncate">
+            <p class="font-semibold text-default truncate">
               {{ user.username }}
             </p>
             <UBadge
@@ -237,14 +237,14 @@ function formatDate(iso: string): string {
               size="xs"
             />
           </div>
-          <p class="text-xs text-(--ui-text-dimmed)">
+          <p class="text-xs text-dimmed">
             ID {{ user.id }}
           </p>
         </div>
 
-        <p class="text-lg font-bold tabular-nums text-(--ui-text) shrink-0">
+        <p class="text-lg font-bold tabular-nums text-default shrink-0">
           {{ formatScore(user.totalScore) }}
-          <span class="text-xs font-normal text-(--ui-text-dimmed)"> Pkt</span>
+          <span class="text-xs font-normal text-dimmed"> Pkt</span>
         </p>
 
         <!-- Actions -->
@@ -278,7 +278,7 @@ function formatDate(iso: string): string {
 
       <div
         v-if="!sorted.length"
-        class="text-center py-12 text-(--ui-text-muted)"
+        class="text-center py-12 text-muted"
       >
         <UIcon
           name="i-lucide-users"
@@ -393,7 +393,7 @@ function formatDate(iso: string): string {
       title="Benutzer löschen"
     >
       <template #body>
-        <p class="text-(--ui-text)">
+        <p class="text-default">
           Möchtest du den Benutzer
           <span class="font-semibold">{{ deleteTarget?.username }}</span>
           wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden.
@@ -439,7 +439,7 @@ function formatDate(iso: string): string {
               />
             </UFormField>
             <div class="flex items-end pb-1">
-              <p class="text-xs text-(--ui-text-muted)">
+              <p class="text-xs text-muted">
                 Positiv = Bonus<br>Negativ = Abzug
               </p>
             </div>
@@ -467,7 +467,7 @@ function formatDate(iso: string): string {
             v-if="adjHistory.length"
             class="pt-2"
           >
-            <p class="text-xs font-semibold uppercase tracking-wider text-(--ui-text-dimmed) mb-2">
+            <p class="text-xs font-semibold uppercase tracking-wider text-dimmed mb-2">
               Verlauf
             </p>
             <div class="space-y-2 max-h-40 overflow-y-auto">
@@ -484,10 +484,10 @@ function formatDate(iso: string): string {
                   class="shrink-0 mt-0.5"
                 />
                 <div class="flex-1 min-w-0">
-                  <p class="text-(--ui-text) truncate">
+                  <p class="text-default truncate">
                     {{ adj.reason }}
                   </p>
-                  <p class="text-xs text-(--ui-text-dimmed)">
+                  <p class="text-xs text-dimmed">
                     {{ formatDate(adj.createdAt) }}
                   </p>
                 </div>
@@ -496,7 +496,7 @@ function formatDate(iso: string): string {
           </div>
           <div
             v-else-if="!adjHistoryLoading"
-            class="text-xs text-(--ui-text-dimmed)"
+            class="text-xs text-dimmed"
           >
             Noch keine Korrekturen vorhanden.
           </div>

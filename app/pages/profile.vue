@@ -68,7 +68,9 @@ function formatDate(iso: string): string {
   <div class="p-4 lg:p-8 max-w-2xl mx-auto space-y-6">
     <div class="flex items-center gap-3 mb-6">
       <UIcon name="i-lucide-user" class="w-6 h-6 text-amber-500" />
-      <h1 class="text-2xl font-bold text-(--ui-text)">Profil</h1>
+      <h1 class="text-2xl font-bold text-(--ui-text)">
+        Profil
+      </h1>
     </div>
 
     <!-- User info card -->
@@ -80,7 +82,9 @@ function formatDate(iso: string): string {
           class="ring-2 ring-(--ui-border)"
         />
         <div class="flex-1 min-w-0">
-          <p class="text-xl font-bold text-(--ui-text) truncate">{{ user?.username }}</p>
+          <p class="text-xl font-bold text-(--ui-text) truncate">
+            {{ user?.username }}
+          </p>
           <div class="flex items-center gap-2 mt-1">
             <UBadge
               :label="user?.role === 'admin' ? 'Administrator' : 'Spieler'"
@@ -93,7 +97,9 @@ function formatDate(iso: string): string {
           <p class="text-3xl font-bold text-amber-500 tabular-nums">
             {{ user ? formatScore(user.totalScore) : '–' }}
           </p>
-          <p class="text-xs text-(--ui-text-dimmed)">Punkte gesamt</p>
+          <p class="text-xs text-(--ui-text-dimmed)">
+            Punkte gesamt
+          </p>
         </div>
       </div>
     </UCard>
@@ -101,7 +107,9 @@ function formatDate(iso: string): string {
     <!-- Change password -->
     <UCard>
       <template #header>
-        <h2 class="font-semibold text-(--ui-text)">Passwort ändern</h2>
+        <h2 class="font-semibold text-(--ui-text)">
+          Passwort ändern
+        </h2>
       </template>
 
       <form class="space-y-4" @submit.prevent="changePassword">
@@ -153,7 +161,9 @@ function formatDate(iso: string): string {
     <!-- Score adjustment history (admin only) -->
     <UCard v-if="auth.isAdmin.value && adjustments?.length">
       <template #header>
-        <h2 class="font-semibold text-(--ui-text)">Punktekorrekturen</h2>
+        <h2 class="font-semibold text-(--ui-text)">
+          Punktekorrekturen
+        </h2>
       </template>
       <div class="space-y-2">
         <div
@@ -168,8 +178,12 @@ function formatDate(iso: string): string {
             class="flex-shrink-0 mt-0.5"
           />
           <div class="flex-1 min-w-0">
-            <p class="text-sm text-(--ui-text)">{{ adj.reason }}</p>
-            <p class="text-xs text-(--ui-text-dimmed)">{{ formatDate(adj.createdAt) }}</p>
+            <p class="text-sm text-(--ui-text)">
+              {{ adj.reason }}
+            </p>
+            <p class="text-xs text-(--ui-text-dimmed)">
+              {{ formatDate(adj.createdAt) }}
+            </p>
           </div>
         </div>
       </div>

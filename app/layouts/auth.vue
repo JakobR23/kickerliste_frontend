@@ -23,6 +23,8 @@ const colorMode = useColorMode()
 
     <slot />
 
-    <p class="mt-8 text-xs text-(--ui-text-dimmed)">Büro-Kicker Ergebnisverfolgung</p>
+    <p class="mt-8 text-xs text-(--ui-text-dimmed)">
+      Büro-Kicker Ergebnisverfolgung
+    </p>
   </div>
 </template>

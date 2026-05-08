@@ -120,7 +120,9 @@ const resultLabels = {
   <div class="p-4 lg:p-8 max-w-2xl mx-auto">
     <div class="flex items-center gap-3 mb-6">
       <UIcon name="i-lucide-clipboard-check" class="w-6 h-6 text-amber-500" />
-      <h1 class="text-2xl font-bold text-(--ui-text)">Spielüberprüfung</h1>
+      <h1 class="text-2xl font-bold text-(--ui-text)">
+        Spielüberprüfung
+      </h1>
     </div>
 
     <UAlert
@@ -170,7 +172,9 @@ const resultLabels = {
     <UCard v-if="lookedUpFixture">
       <template #header>
         <div class="flex items-center justify-between">
-          <h2 class="font-semibold text-(--ui-text)">Spiel #{{ lookedUpFixture.id }}</h2>
+          <h2 class="font-semibold text-(--ui-text)">
+            Spiel #{{ lookedUpFixture.id }}
+          </h2>
           <UBadge
             :label="statusConfig[lookedUpFixture.status].label"
             :color="statusConfig[lookedUpFixture.status].color"
@@ -182,30 +186,52 @@ const resultLabels = {
       <div class="space-y-3">
         <div class="grid grid-cols-2 gap-4 text-sm">
           <div>
-            <p class="text-(--ui-text-dimmed) text-xs mb-1">Team 1</p>
-            <p class="font-medium text-(--ui-text)">{{ teamName(lookedUpFixture.team1Id) }}</p>
+            <p class="text-(--ui-text-dimmed) text-xs mb-1">
+              Team 1
+            </p>
+            <p class="font-medium text-(--ui-text)">
+              {{ teamName(lookedUpFixture.team1Id) }}
+            </p>
           </div>
           <div>
-            <p class="text-(--ui-text-dimmed) text-xs mb-1">Team 2</p>
-            <p class="font-medium text-(--ui-text)">{{ teamName(lookedUpFixture.team2Id) }}</p>
+            <p class="text-(--ui-text-dimmed) text-xs mb-1">
+              Team 2
+            </p>
+            <p class="font-medium text-(--ui-text)">
+              {{ teamName(lookedUpFixture.team2Id) }}
+            </p>
           </div>
           <div>
-            <p class="text-(--ui-text-dimmed) text-xs mb-1">Ergebnis</p>
-            <p class="font-medium text-(--ui-text)">{{ resultLabels[lookedUpFixture.result] }}</p>
+            <p class="text-(--ui-text-dimmed) text-xs mb-1">
+              Ergebnis
+            </p>
+            <p class="font-medium text-(--ui-text)">
+              {{ resultLabels[lookedUpFixture.result] }}
+            </p>
           </div>
           <div>
-            <p class="text-(--ui-text-dimmed) text-xs mb-1">Spielwert</p>
-            <p class="font-medium text-(--ui-text)">{{ lookedUpFixture.value }} Punkte</p>
+            <p class="text-(--ui-text-dimmed) text-xs mb-1">
+              Spielwert
+            </p>
+            <p class="font-medium text-(--ui-text)">
+              {{ lookedUpFixture.value }} Punkte
+            </p>
           </div>
           <div v-if="lookedUpFixture.team1Score !== null">
-            <p class="text-(--ui-text-dimmed) text-xs mb-1">Score</p>
+            <p class="text-(--ui-text-dimmed) text-xs mb-1">
+              Score
+            </p>
             <p class="font-medium text-(--ui-text)">
               {{ lookedUpFixture.team1Score }} : {{ lookedUpFixture.team2Score }}
             </p>
           </div>
           <div>
-            <p class="text-(--ui-text-dimmed) text-xs mb-1">Gespielt am</p>
-            <p class="font-medium text-(--ui-text)">{{ formatDate(lookedUpFixture.playedAt) }}</p>
+            <p class="text-(--ui-text-dimmed) text-xs mb-1">
+              Gespielt am
+            </p>
+            <p class="font-medium text-(--ui-text)">
+              {{ formatDate(lookedUpFixture.playedAt) }}
+            </p>
           </div>
         </div>
 

@@ -25,7 +25,9 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
   <div class="p-4 lg:p-8 max-w-3xl mx-auto">
     <div class="flex items-center gap-3 mb-6">
       <UIcon name="i-lucide-trophy" class="w-6 h-6 text-amber-500" />
-      <h1 class="text-2xl font-bold text-(--ui-text)">Rangliste</h1>
+      <h1 class="text-2xl font-bold text-(--ui-text)">
+        Rangliste
+      </h1>
     </div>
 
     <!-- Loading -->
@@ -84,7 +86,9 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
           class="flex-shrink-0 ring-1 ring-(--ui-border)"
         />
         <div class="flex-1 min-w-0">
-          <p class="font-semibold text-(--ui-text) truncate">{{ user.username }}</p>
+          <p class="font-semibold text-(--ui-text) truncate">
+            {{ user.username }}
+          </p>
           <p class="text-xs text-(--ui-text-muted)">
             <UBadge
               v-if="user.role === 'admin'"
@@ -106,7 +110,9 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
           >
             {{ formatScore(user.totalScore) }}
           </p>
-          <p class="text-xs text-(--ui-text-dimmed)">Punkte</p>
+          <p class="text-xs text-(--ui-text-dimmed)">
+            Punkte
+          </p>
         </div>
       </div>
     </div>
@@ -114,7 +120,9 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
     <!-- Empty -->
     <div v-else class="text-center py-16 text-(--ui-text-muted)">
       <UIcon name="i-lucide-users" class="w-10 h-10 mx-auto mb-3 opacity-40" />
-      <p>Noch keine Spieler vorhanden.</p>
+      <p>
+        Noch keine Spieler vorhanden.
+      </p>
     </div>
   </div>
 </template>

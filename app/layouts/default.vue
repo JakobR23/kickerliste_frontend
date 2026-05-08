@@ -34,7 +34,6 @@ watch(route, () => {
 
 <template>
   <div class="flex h-screen overflow-hidden bg-(--ui-bg) text-(--ui-text)">
-
     <!-- Mobile overlay -->
     <Transition name="fade">
       <div

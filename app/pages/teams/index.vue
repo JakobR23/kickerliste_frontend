@@ -48,7 +48,9 @@ function formatDate(iso: string): string {
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
         <UIcon name="i-lucide-users" class="w-6 h-6 text-amber-500" />
-        <h1 class="text-2xl font-bold text-(--ui-text)">Teams</h1>
+        <h1 class="text-2xl font-bold text-(--ui-text)">
+          Teams
+        </h1>
       </div>
       <UButton
         icon="i-lucide-plus"
@@ -110,7 +112,9 @@ function formatDate(iso: string): string {
     <!-- Empty -->
     <div v-else class="text-center py-16 text-(--ui-text-muted)">
       <UIcon name="i-lucide-users" class="w-10 h-10 mx-auto mb-3 opacity-40" />
-      <p class="mb-4">Noch keine Teams vorhanden.</p>
+      <p class="mb-4">
+        Noch keine Teams vorhanden.
+      </p>
       <UButton icon="i-lucide-plus" variant="soft" @click="createModalOpen = true">
         Erstes Team erstellen
       </UButton>

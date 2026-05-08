@@ -89,7 +89,9 @@ async function onSubmit() {
         to="/fixtures"
       />
       <UIcon name="i-lucide-plus-circle" class="w-6 h-6 text-amber-500" />
-      <h1 class="text-2xl font-bold text-(--ui-text)">Spiel einreichen</h1>
+      <h1 class="text-2xl font-bold text-(--ui-text)">
+        Spiel einreichen
+      </h1>
     </div>
 
     <UCard>

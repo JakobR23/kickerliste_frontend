@@ -164,8 +164,12 @@ function formatScore(score: number): string {
             class="ring-1 ring-(--ui-border)"
           />
           <div class="flex-1 min-w-0">
-            <p class="font-medium text-(--ui-text) truncate">{{ member.username }}</p>
-            <p class="text-xs text-(--ui-text-dimmed)">{{ formatScore(member.totalScore) }} Punkte</p>
+            <p class="font-medium text-(--ui-text) truncate">
+              {{ member.username }}
+            </p>
+            <p class="text-xs text-(--ui-text-dimmed)">
+              {{ formatScore(member.totalScore) }} Punkte
+            </p>
           </div>
           <UButton
             icon="i-lucide-x"
@@ -180,7 +184,9 @@ function formatScore(score: number): string {
 
       <div v-else class="py-6 text-center text-(--ui-text-muted)">
         <UIcon name="i-lucide-user-x" class="w-8 h-8 mx-auto mb-2 opacity-40" />
-        <p class="text-sm">Noch keine Mitglieder.</p>
+        <p class="text-sm">
+          Noch keine Mitglieder.
+        </p>
         <UButton
           v-if="!teamFull"
           size="sm"

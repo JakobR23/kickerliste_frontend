@@ -39,7 +39,9 @@ async function onSubmit() {
 <template>
   <UCard class="w-full max-w-sm">
     <template #header>
-      <h1 class="text-xl font-semibold text-(--ui-text)">Registrieren</h1>
+      <h1 class="text-xl font-semibold text-(--ui-text)">
+        Registrieren
+      </h1>
     </template>
 
     <form class="space-y-4" @submit.prevent="onSubmit">

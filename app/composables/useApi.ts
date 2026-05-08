@@ -47,7 +47,7 @@ export function useApi() {
     updateUser: (id: number, body: UpdateUserRequest) =>
       client<User>(`/users/${id}`, { method: 'PUT', body }),
     deleteUser: (id: number) =>
-      client<void>(`/users/${id}`, { method: 'DELETE' }),
+      client(`/users/${id}`, { method: 'DELETE' }),
 
     // Teams
     getTeams: () => client<Team[]>('/teams'),
@@ -57,13 +57,13 @@ export function useApi() {
     updateTeam: (id: number, body: UpdateTeamRequest) =>
       client<Team>(`/teams/${id}`, { method: 'PUT', body }),
     deleteTeam: (id: number) =>
-      client<void>(`/teams/${id}`, { method: 'DELETE' }),
+      client(`/teams/${id}`, { method: 'DELETE' }),
     getTeamMembers: (id: number) =>
       client<User[]>(`/teams/${id}/members`),
     addTeamMember: (id: number, body: AddTeamMemberRequest) =>
       client<User>(`/teams/${id}/members`, { method: 'POST', body }),
     removeTeamMember: (teamId: number, userId: number) =>
-      client<void>(`/teams/${teamId}/members/${userId}`, { method: 'DELETE' }),
+      client(`/teams/${teamId}/members/${userId}`, { method: 'DELETE' }),
 
     // Fixtures
     getFixtures: (teamId?: number) =>
@@ -75,7 +75,7 @@ export function useApi() {
     updateFixture: (id: number, body: UpdateFixtureRequest) =>
       client<Fixture>(`/fixtures/${id}`, { method: 'PUT', body }),
     deleteFixture: (id: number) =>
-      client<void>(`/fixtures/${id}`, { method: 'DELETE' }),
+      client(`/fixtures/${id}`, { method: 'DELETE' }),
     approveFixture: (id: number) =>
       client<Fixture>(`/fixtures/${id}/approve`, { method: 'PATCH' }),
     rejectFixture: (id: number) =>

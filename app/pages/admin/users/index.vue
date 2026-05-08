@@ -191,7 +191,9 @@ function formatDate(iso: string): string {
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
         <UIcon name="i-lucide-user-cog" class="w-6 h-6 text-amber-500" />
-        <h1 class="text-2xl font-bold text-(--ui-text)">Benutzerverwaltung</h1>
+        <h1 class="text-2xl font-bold text-(--ui-text)">
+          Benutzerverwaltung
+        </h1>
       </div>
       <UButton
         icon="i-lucide-user-plus"
@@ -213,7 +215,9 @@ function formatDate(iso: string): string {
 
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2">
-            <p class="font-semibold text-(--ui-text) truncate">{{ user.username }}</p>
+            <p class="font-semibold text-(--ui-text) truncate">
+              {{ user.username }}
+            </p>
             <UBadge
               v-if="user.role === 'admin'"
               label="Admin"
@@ -222,7 +226,9 @@ function formatDate(iso: string): string {
               size="xs"
             />
           </div>
-          <p class="text-xs text-(--ui-text-dimmed)">ID {{ user.id }}</p>
+          <p class="text-xs text-(--ui-text-dimmed)">
+            ID {{ user.id }}
+          </p>
         </div>
 
         <p class="text-lg font-bold tabular-nums text-(--ui-text) flex-shrink-0">
@@ -408,8 +414,12 @@ function formatDate(iso: string): string {
                   class="flex-shrink-0 mt-0.5"
                 />
                 <div class="flex-1 min-w-0">
-                  <p class="text-(--ui-text) truncate">{{ adj.reason }}</p>
-                  <p class="text-xs text-(--ui-text-dimmed)">{{ formatDate(adj.createdAt) }}</p>
+                  <p class="text-(--ui-text) truncate">
+                    {{ adj.reason }}
+                  </p>
+                  <p class="text-xs text-(--ui-text-dimmed)">
+                    {{ formatDate(adj.createdAt) }}
+                  </p>
                 </div>
               </div>
             </div>

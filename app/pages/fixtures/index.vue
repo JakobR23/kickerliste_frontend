@@ -52,7 +52,9 @@ function resultColor(result: string): 'success' | 'neutral' | 'amber' {
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
         <UIcon name="i-lucide-calendar-days" class="w-6 h-6 text-amber-500" />
-        <h1 class="text-2xl font-bold text-(--ui-text)">Spielpläne</h1>
+        <h1 class="text-2xl font-bold text-(--ui-text)">
+          Spielpläne
+        </h1>
       </div>
       <UButton
         to="/fixtures/new"
@@ -94,8 +96,12 @@ function resultColor(result: string): 'success' | 'neutral' | 'amber' {
         <div class="flex items-center gap-4">
           <!-- Date + Value -->
           <div class="flex-shrink-0 text-center w-16">
-            <p class="text-xs text-(--ui-text-dimmed) font-medium">{{ formatDate(f.playedAt) }}</p>
-            <p class="text-xs text-(--ui-text-dimmed) mt-0.5">Wert: {{ f.value }}</p>
+            <p class="text-xs text-(--ui-text-dimmed) font-medium">
+              {{ formatDate(f.playedAt) }}
+            </p>
+            <p class="text-xs text-(--ui-text-dimmed) mt-0.5">
+              Wert: {{ f.value }}
+            </p>
           </div>
 
           <USeparator orientation="vertical" class="h-10" />
@@ -145,7 +151,9 @@ function resultColor(result: string): 'success' | 'neutral' | 'amber' {
     <!-- Empty -->
     <div v-else class="text-center py-16 text-(--ui-text-muted)">
       <UIcon name="i-lucide-calendar-days" class="w-10 h-10 mx-auto mb-3 opacity-40" />
-      <p class="mb-4">Noch keine genehmigten Spiele vorhanden.</p>
+      <p class="mb-4">
+        Noch keine genehmigten Spiele vorhanden.
+      </p>
       <UButton to="/fixtures/new" icon="i-lucide-plus" variant="soft">
         Erstes Spiel einreichen
       </UButton>

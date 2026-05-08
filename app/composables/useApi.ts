@@ -15,9 +15,8 @@ export function useApi() {
     baseURL: config.public.apiBaseUrl as string,
     onRequest({ options }) {
       if (auth.token.value) {
-        const existing = (options.headers as Record<string, string>) ?? {}
         options.headers = {
-          ...existing,
+          ...(options.headers as unknown as Record<string, string>),
           Authorization: `Bearer ${auth.token.value}`
         }
       }

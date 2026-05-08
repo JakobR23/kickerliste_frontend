@@ -41,7 +41,7 @@ function resultLabel(f: Fixture): string {
   return `${winnerName} gewinnt`
 }
 
-function resultColor(result: string): 'success' | 'neutral' | 'amber' {
+function resultColor(result: string): 'success' | 'neutral' {
   if (result === 'draw') return 'neutral'
   return 'success'
 }
@@ -80,7 +80,7 @@ function resultColor(result: string): 'success' | 'neutral' | 'amber' {
       icon="i-lucide-circle-alert"
     >
       <template #footer>
-        <UButton size="sm" variant="soft" color="error" @click="refresh">
+        <UButton size="sm" variant="soft" color="error" @click="() => refresh()">
           Erneut versuchen
         </UButton>
       </template>

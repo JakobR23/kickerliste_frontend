@@ -49,7 +49,7 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
       icon="i-lucide-circle-alert"
     >
       <template #footer>
-        <UButton size="sm" variant="soft" color="error" @click="refresh">
+        <UButton size="sm" variant="soft" color="error" @click="() => refresh()">
           Erneut versuchen
         </UButton>
       </template>
@@ -93,7 +93,7 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
             <UBadge
               v-if="user.role === 'admin'"
               label="Admin"
-              color="amber"
+              color="primary"
               variant="soft"
               size="xs"
             />

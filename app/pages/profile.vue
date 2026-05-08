@@ -88,7 +88,7 @@ function formatDate(iso: string): string {
           <div class="flex items-center gap-2 mt-1">
             <UBadge
               :label="user?.role === 'admin' ? 'Administrator' : 'Spieler'"
-              :color="user?.role === 'admin' ? 'amber' : 'neutral'"
+              :color="user?.role === 'admin' ? 'primary' : 'neutral'"
               variant="soft"
             />
           </div>

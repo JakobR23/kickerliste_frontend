@@ -104,7 +104,7 @@ function formatDate(iso: string): string {
 }
 
 const statusConfig = {
-  pending: { label: 'Ausstehend', color: 'amber' as const },
+  pending: { label: 'Ausstehend', color: 'warning' as const },
   approved: { label: 'Genehmigt', color: 'success' as const },
   rejected: { label: 'Abgelehnt', color: 'error' as const }
 }

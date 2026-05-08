@@ -23,8 +23,8 @@ const resultOptions = [
 ]
 
 const state = reactive({
-  team1Id: null as number | null,
-  team2Id: null as number | null,
+  team1Id: undefined as number | undefined,
+  team2Id: undefined as number | undefined,
   result: 'team_1' as 'team_1' | 'team_2' | 'draw',
   team1Score: null as number | null,
   team2Score: null as number | null,

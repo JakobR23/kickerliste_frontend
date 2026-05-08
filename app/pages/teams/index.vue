@@ -76,7 +76,7 @@ function formatDate(iso: string): string {
       icon="i-lucide-circle-alert"
     >
       <template #footer>
-        <UButton size="sm" variant="soft" color="error" @click="refresh">
+        <UButton size="sm" variant="soft" color="error" @click="() => refresh()">
           Erneut versuchen
         </UButton>
       </template>

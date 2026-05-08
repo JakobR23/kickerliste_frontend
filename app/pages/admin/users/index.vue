@@ -221,7 +221,7 @@ function formatDate(iso: string): string {
             <UBadge
               v-if="user.role === 'admin'"
               label="Admin"
-              color="amber"
+              color="primary"
               variant="soft"
               size="xs"
             />
@@ -276,7 +276,7 @@ function formatDate(iso: string): string {
       <template #body>
         <div class="space-y-4">
           <UAlert
-            color="amber"
+            color="warning"
             variant="soft"
             icon="i-lucide-info"
             description="Admin-erstellte Konten müssen beim ersten Login ein neues Passwort vergeben."

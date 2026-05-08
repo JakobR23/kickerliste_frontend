@@ -51,7 +51,7 @@ async function saveTeamName() {
 
 // Add member
 const addMemberOpen = ref(false)
-const selectedUserId = ref<number | null>(null)
+const selectedUserId = ref<number | undefined>(undefined)
 const addMemberLoading = ref(false)
 
 const memberIds = computed(() => new Set(members.value?.map(m => m.id) ?? []))
@@ -69,7 +69,7 @@ async function addMember() {
   addMemberLoading.value = true
   try {
     await api.addTeamMember(teamId.value, { userId: selectedUserId.value })
-    selectedUserId.value = null
+    selectedUserId.value = undefined
     addMemberOpen.value = false
     await refreshMembers()
     toast.add({ title: 'Mitglied hinzugefügt', color: 'success', icon: 'i-lucide-check-circle' })

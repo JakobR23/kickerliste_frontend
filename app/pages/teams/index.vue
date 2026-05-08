@@ -113,7 +113,7 @@ function formatDate(iso: string): string {
       >
         <UCard class="hover:bg-(--ui-bg-accented) transition-colors cursor-pointer h-full">
           <div class="flex items-start gap-3">
-            <div class="w-10 h-10 rounded-lg bg-amber-500/15 flex items-center justify-center flex-shrink-0">
+            <div class="w-10 h-10 rounded-lg bg-amber-500/15 flex items-center justify-center shrink-0">
               <UIcon
                 name="i-lucide-users"
                 class="w-5 h-5 text-amber-500"
@@ -129,7 +129,7 @@ function formatDate(iso: string): string {
             </div>
             <UIcon
               name="i-lucide-chevron-right"
-              class="w-4 h-4 text-(--ui-text-dimmed) flex-shrink-0 mt-1"
+              class="w-4 h-4 text-(--ui-text-dimmed) shrink-0 mt-1"
             />
           </div>
         </UCard>

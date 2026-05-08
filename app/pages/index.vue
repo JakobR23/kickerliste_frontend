@@ -85,7 +85,7 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
         ]"
       >
         <!-- Rank -->
-        <div class="w-8 flex-shrink-0 flex justify-center">
+        <div class="w-8 shrink-0 flex justify-center">
           <UIcon
             v-if="index < 3"
             :name="medalIcons[index]"
@@ -103,7 +103,7 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
         <UAvatar
           :alt="user.username"
           size="sm"
-          class="flex-shrink-0 ring-1 ring-(--ui-border)"
+          class="shrink-0 ring-1 ring-(--ui-border)"
         />
         <div class="flex-1 min-w-0">
           <p class="font-semibold text-(--ui-text) truncate">
@@ -121,7 +121,7 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
         </div>
 
         <!-- Score -->
-        <div class="text-right flex-shrink-0">
+        <div class="text-right shrink-0">
           <p
             :class="[
               'text-xl font-bold tabular-nums',

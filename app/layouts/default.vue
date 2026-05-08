@@ -62,13 +62,13 @@ watch(route, () => {
       <!-- Logo -->
       <div
         :class="[
-          'flex items-center gap-3 px-4 py-4 border-b border-(--ui-border) flex-shrink-0',
+          'flex items-center gap-3 px-4 py-4 border-b border-(--ui-border) shrink-0',
           sidebarCollapsed ? 'lg:justify-center lg:px-0' : ''
         ]"
       >
         <UIcon
           name="i-lucide-zap"
-          class="w-6 h-6 text-amber-500 flex-shrink-0"
+          class="w-6 h-6 text-amber-500 shrink-0"
         />
         <span
           :class="['font-bold text-lg truncate transition-all duration-300', sidebarCollapsed ? 'lg:hidden' : '']"
@@ -97,7 +97,7 @@ watch(route, () => {
           >
             <UIcon
               :name="item.icon"
-              class="w-5 h-5 flex-shrink-0"
+              class="w-5 h-5 shrink-0"
             />
             <span :class="['truncate', sidebarCollapsed ? 'lg:hidden' : '']">{{ item.label }}</span>
           </NuxtLink>
@@ -137,7 +137,7 @@ watch(route, () => {
             >
               <UIcon
                 :name="item.icon"
-                class="w-5 h-5 flex-shrink-0"
+                class="w-5 h-5 shrink-0"
               />
               <span :class="['truncate', sidebarCollapsed ? 'lg:hidden' : '']">{{ item.label }}</span>
             </NuxtLink>
@@ -146,7 +146,7 @@ watch(route, () => {
       </nav>
 
       <!-- Bottom section -->
-      <div class="border-t border-(--ui-border) p-2 space-y-0.5 flex-shrink-0">
+      <div class="border-t border-(--ui-border) p-2 space-y-0.5 shrink-0">
         <!-- Color mode toggle -->
         <button
           :title="sidebarCollapsed ? (colorMode.value === 'dark' ? 'Hellmodus' : 'Dunkelmodus') : undefined"
@@ -159,7 +159,7 @@ watch(route, () => {
         >
           <UIcon
             :name="colorMode.value === 'dark' ? 'i-lucide-sun' : 'i-lucide-moon'"
-            class="w-5 h-5 flex-shrink-0"
+            class="w-5 h-5 shrink-0"
           />
           <span :class="['truncate', sidebarCollapsed ? 'lg:hidden' : '']">
             {{ colorMode.value === 'dark' ? 'Hellmodus' : 'Dunkelmodus' }}
@@ -181,7 +181,7 @@ watch(route, () => {
           <UAvatar
             :alt="auth.claims.value?.username ?? '?'"
             size="xs"
-            class="flex-shrink-0 ring-1 ring-(--ui-border)"
+            class="shrink-0 ring-1 ring-(--ui-border)"
           />
           <span :class="['truncate', sidebarCollapsed ? 'lg:hidden' : '']">
             {{ auth.claims.value?.username }}
@@ -200,7 +200,7 @@ watch(route, () => {
         >
           <UIcon
             name="i-lucide-log-out"
-            class="w-5 h-5 flex-shrink-0"
+            class="w-5 h-5 shrink-0"
           />
           <span :class="['truncate', sidebarCollapsed ? 'lg:hidden' : '']">Abmelden</span>
         </button>
@@ -216,7 +216,7 @@ watch(route, () => {
         >
           <UIcon
             :name="sidebarCollapsed ? 'i-lucide-chevron-right' : 'i-lucide-chevron-left'"
-            class="w-5 h-5 flex-shrink-0"
+            class="w-5 h-5 shrink-0"
           />
           <span
             v-if="!sidebarCollapsed"
@@ -229,7 +229,7 @@ watch(route, () => {
     <!-- Main content area -->
     <div class="flex flex-col flex-1 min-w-0 overflow-hidden">
       <!-- Mobile top bar -->
-      <header class="lg:hidden flex items-center gap-3 px-4 py-3 border-b border-(--ui-border) bg-(--ui-bg-elevated) flex-shrink-0">
+      <header class="lg:hidden flex items-center gap-3 px-4 py-3 border-b border-(--ui-border) bg-(--ui-bg-elevated) shrink-0">
         <UButton
           icon="i-lucide-menu"
           variant="ghost"

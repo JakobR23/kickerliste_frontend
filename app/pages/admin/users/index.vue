@@ -221,7 +221,7 @@ function formatDate(iso: string): string {
         <UAvatar
           :alt="user.username"
           size="sm"
-          class="ring-1 ring-(--ui-border) flex-shrink-0"
+          class="ring-1 ring-(--ui-border) shrink-0"
         />
 
         <div class="flex-1 min-w-0">
@@ -242,13 +242,13 @@ function formatDate(iso: string): string {
           </p>
         </div>
 
-        <p class="text-lg font-bold tabular-nums text-(--ui-text) flex-shrink-0">
+        <p class="text-lg font-bold tabular-nums text-(--ui-text) shrink-0">
           {{ formatScore(user.totalScore) }}
           <span class="text-xs font-normal text-(--ui-text-dimmed)"> Pkt</span>
         </p>
 
         <!-- Actions -->
-        <div class="flex items-center gap-1 flex-shrink-0">
+        <div class="flex items-center gap-1 shrink-0">
           <UButton
             icon="i-lucide-sliders-horizontal"
             variant="ghost"
@@ -481,7 +481,7 @@ function formatDate(iso: string): string {
                   :color="adj.amount > 0 ? 'success' : 'error'"
                   variant="soft"
                   size="xs"
-                  class="flex-shrink-0 mt-0.5"
+                  class="shrink-0 mt-0.5"
                 />
                 <div class="flex-1 min-w-0">
                   <p class="text-(--ui-text) truncate">

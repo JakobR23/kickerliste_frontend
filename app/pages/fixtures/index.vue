@@ -116,7 +116,7 @@ function resultColor(result: string): 'success' | 'neutral' {
       >
         <div class="flex items-center gap-4">
           <!-- Date + Value -->
-          <div class="flex-shrink-0 text-center w-16">
+          <div class="shrink-0 text-center w-16">
             <p class="text-xs text-(--ui-text-dimmed) font-medium">
               {{ formatDate(f.playedAt) }}
             </p>
@@ -141,7 +141,7 @@ function resultColor(result: string): 'success' | 'neutral' {
               >
                 {{ teamName(f.team1Id) }}
               </span>
-              <span class="text-(--ui-text-dimmed) text-sm flex-shrink-0">vs</span>
+              <span class="text-(--ui-text-dimmed) text-sm shrink-0">vs</span>
               <span
                 :class="[
                   'font-semibold text-sm truncate',
@@ -164,7 +164,7 @@ function resultColor(result: string): 'success' | 'neutral' {
           </div>
 
           <!-- Result badge -->
-          <div class="flex-shrink-0">
+          <div class="shrink-0">
             <UBadge
               :label="resultLabel(f)"
               :color="resultColor(f.result)"

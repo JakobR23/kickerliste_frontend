@@ -1,4 +1,9 @@
 <script setup lang="ts">
+import { reactive, ref } from 'vue'
+import { navigateTo } from '#imports'
+import { useAuthStore } from '~/composables/useAuthStore'
+import { useApi } from '~/composables/useApi'
+
 definePageMeta({ layout: 'auth' })
 
 const auth = useAuthStore()

@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { ref, watch } from 'vue'
+import { useColorMode, useRoute, navigateTo } from '#imports'
+import { useAuthStore } from '~/composables/useAuthStore'
+
 const auth = useAuthStore()
 const colorMode = useColorMode()
 const route = useRoute()

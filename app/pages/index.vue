@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { computed } from 'vue'
+import { useAsyncData } from '#imports'
+import { useApi } from '~/composables/useApi'
 import type { User } from '~/types/api'
 
 const api = useApi()

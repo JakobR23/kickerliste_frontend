@@ -1,3 +1,5 @@
+import { useRuntimeConfig, navigateTo } from '#imports'
+import { useAuthStore } from '~/composables/useAuthStore'
 import type {
   User, Team, Fixture, ScoreAdjustment,
   LoginRequest, RegisterRequest, ChangePasswordRequest,

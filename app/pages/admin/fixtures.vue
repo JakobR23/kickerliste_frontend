@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { ref, computed, onMounted } from 'vue'
+import { useAsyncData, useToast, navigateTo } from '#imports'
+import { useAuthStore } from '~/composables/useAuthStore'
+import { useApi } from '~/composables/useApi'
 import type { Fixture, Team } from '~/types/api'
 
 const auth = useAuthStore()

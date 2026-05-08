@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { ref } from 'vue'
+import { useAsyncData, useToast } from '#imports'
+import { useApi } from '~/composables/useApi'
 import type { Team } from '~/types/api'
 
 const api = useApi()

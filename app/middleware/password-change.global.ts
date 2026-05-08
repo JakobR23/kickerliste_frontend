@@ -1,3 +1,6 @@
+import { defineNuxtRouteMiddleware, navigateTo } from '#imports'
+import { useAuthStore } from '~/composables/useAuthStore'
+
 export default defineNuxtRouteMiddleware((to) => {
   if (import.meta.server) return
 

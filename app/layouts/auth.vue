@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useColorMode } from '#imports'
+
 const colorMode = useColorMode()
 </script>
 

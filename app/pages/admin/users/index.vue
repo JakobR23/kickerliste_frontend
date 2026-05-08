@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { ref, reactive, computed, onMounted } from 'vue'
+import { useAsyncData, useToast, navigateTo } from '#imports'
+import { useAuthStore } from '~/composables/useAuthStore'
+import { useApi } from '~/composables/useApi'
 import type { User, ScoreAdjustment } from '~/types/api'
 
 const auth = useAuthStore()

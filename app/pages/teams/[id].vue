@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { computed, ref } from 'vue'
+import { useRoute, useAsyncData, useToast } from '#imports'
+import { useApi } from '~/composables/useApi'
 import type { Team, User } from '~/types/api'
 
 const route = useRoute()

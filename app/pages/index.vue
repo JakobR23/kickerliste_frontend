@@ -1,76 +1,128 @@
+<script setup lang="ts">
+import type { User } from '~/types/api'
+
+const api = useApi()
+
+const { data: users, pending, error, refresh } = useAsyncData<User[]>(
+  'users-leaderboard',
+  () => api.getUsers()
+)
+
+const sorted = computed(() => {
+  if (!users.value) return []
+  return [...users.value].sort((a, b) => b.totalScore - a.totalScore)
+})
+
+function formatScore(score: number): string {
+  return Number.isInteger(score) ? String(score) : score.toFixed(1)
+}
+
+const medalColors = ['text-amber-400', 'text-zinc-400', 'text-amber-700']
+const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
+</script>
+
 <template>
-  <div>
-    <UPageHero
-      title="Nuxt Starter Template"
-      description="A production-ready starter template powered by Nuxt UI. Build beautiful, accessible, and performant applications in minutes, not hours."
-      :links="[{
-        label: 'Get started',
-        to: 'https://ui.nuxt.com/docs/getting-started/installation/nuxt',
-        target: '_blank',
-        trailingIcon: 'i-lucide-arrow-right',
-        size: 'xl'
-      }, {
-        label: 'Use this template',
-        to: 'https://github.com/nuxt-ui-templates/starter',
-        target: '_blank',
-        icon: 'i-simple-icons-github',
-        size: 'xl',
-        color: 'neutral',
-        variant: 'subtle'
-      }]"
-    />
+  <div class="p-4 lg:p-8 max-w-3xl mx-auto">
+    <div class="flex items-center gap-3 mb-6">
+      <UIcon name="i-lucide-trophy" class="w-6 h-6 text-amber-500" />
+      <h1 class="text-2xl font-bold text-(--ui-text)">
+        Rangliste
+      </h1>
+    </div>
 
-    <UPageSection
-      id="features"
-      title="Everything you need to build modern Nuxt apps"
-      description="Start with a solid foundation. This template includes all the essentials for building production-ready applications with Nuxt UI's powerful component system."
-      :features="[{
-        icon: 'i-lucide-rocket',
-        title: 'Production-ready from day one',
-        description: 'Pre-configured with TypeScript, ESLint, Tailwind CSS, and all the best practices. Focus on building features, not setting up tooling.'
-      }, {
-        icon: 'i-lucide-palette',
-        title: 'Beautiful by default',
-        description: 'Leveraging Nuxt UI\'s design system with automatic dark mode, consistent spacing, and polished components that look great out of the box.'
-      }, {
-        icon: 'i-lucide-zap',
-        title: 'Lightning fast',
-        description: 'Optimized for performance with SSR/SSG support, automatic code splitting, and edge-ready deployment. Your users will love the speed.'
-      }, {
-        icon: 'i-lucide-blocks',
-        title: '100+ components included',
-        description: 'Access Nuxt UI\'s comprehensive component library. From forms to navigation, everything is accessible, responsive, and customizable.'
-      }, {
-        icon: 'i-lucide-code-2',
-        title: 'Developer experience first',
-        description: 'Auto-imports, hot module replacement, and TypeScript support. Write less boilerplate and ship more features.'
-      }, {
-        icon: 'i-lucide-shield-check',
-        title: 'Built for scale',
-        description: 'Enterprise-ready architecture with proper error handling, SEO optimization, and security best practices built-in.'
-      }]"
-    />
-
-    <UPageSection>
-      <UPageCTA
-        title="Ready to build your next Nuxt app?"
-        description="Join thousands of developers building with Nuxt and Nuxt UI. Get this template and start shipping today."
-        variant="subtle"
-        :links="[{
-          label: 'Start building',
-          to: 'https://ui.nuxt.com/docs/getting-started/installation/nuxt',
-          target: '_blank',
-          trailingIcon: 'i-lucide-arrow-right',
-          color: 'neutral'
-        }, {
-          label: 'View on GitHub',
-          to: 'https://github.com/nuxt-ui-templates/starter',
-          target: '_blank',
-          icon: 'i-simple-icons-github',
-          color: 'neutral',
-          variant: 'outline'
-        }]"
+    <!-- Loading -->
+    <div v-if="pending" class="space-y-3">
+      <div
+        v-for="i in 5"
+        :key="i"
+        class="h-16 rounded-xl bg-(--ui-bg-elevated) animate-pulse"
       />
-    </UPageSection>
+    </div>
+
+    <!-- Error -->
+    <UAlert
+      v-else-if="error"
+      color="error"
+      variant="soft"
+      title="Fehler beim Laden"
+      :description="error.message"
+      icon="i-lucide-circle-alert"
+    >
+      <template #footer>
+        <UButton size="sm" variant="soft" color="error" @click="() => refresh()">
+          Erneut versuchen
+        </UButton>
+      </template>
+    </UAlert>
+
+    <!-- Leaderboard -->
+    <div v-else-if="sorted.length" class="space-y-2">
+      <div
+        v-for="(user, index) in sorted"
+        :key="user.id"
+        :class="[
+          'flex items-center gap-4 px-4 py-3 rounded-xl border transition-colors',
+          index === 0
+            ? 'bg-amber-500/10 border-amber-500/30'
+            : 'bg-(--ui-bg-elevated) border-(--ui-border) hover:bg-(--ui-bg-accented)'
+        ]"
+      >
+        <!-- Rank -->
+        <div class="w-8 flex-shrink-0 flex justify-center">
+          <UIcon
+            v-if="index < 3"
+            :name="medalIcons[index]"
+            :class="['w-5 h-5', medalColors[index]]"
+          />
+          <span v-else class="text-sm font-semibold text-(--ui-text-dimmed)">
+            {{ index + 1 }}
+          </span>
+        </div>
+
+        <!-- Avatar + Name -->
+        <UAvatar
+          :alt="user.username"
+          size="sm"
+          class="flex-shrink-0 ring-1 ring-(--ui-border)"
+        />
+        <div class="flex-1 min-w-0">
+          <p class="font-semibold text-(--ui-text) truncate">
+            {{ user.username }}
+          </p>
+          <p class="text-xs text-(--ui-text-muted)">
+            <UBadge
+              v-if="user.role === 'admin'"
+              label="Admin"
+              color="primary"
+              variant="soft"
+              size="xs"
+            />
+          </p>
+        </div>
+
+        <!-- Score -->
+        <div class="text-right flex-shrink-0">
+          <p
+            :class="[
+              'text-xl font-bold tabular-nums',
+              index === 0 ? 'text-amber-500' : 'text-(--ui-text)'
+            ]"
+          >
+            {{ formatScore(user.totalScore) }}
+          </p>
+          <p class="text-xs text-(--ui-text-dimmed)">
+            Punkte
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Empty -->
+    <div v-else class="text-center py-16 text-(--ui-text-muted)">
+      <UIcon name="i-lucide-users" class="w-10 h-10 mx-auto mb-3 opacity-40" />
+      <p>
+        Noch keine Spieler vorhanden.
+      </p>
+    </div>
   </div>
 </template>

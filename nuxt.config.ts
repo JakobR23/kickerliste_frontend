@@ -9,10 +9,14 @@ export default defineNuxtConfig({
     enabled: true
   },
 
+  ssr: false,
+
   css: ['~/assets/css/main.css'],
 
-  routeRules: {
-    '/': { prerender: true }
+  runtimeConfig: {
+    public: {
+      apiBaseUrl: 'http://localhost:8080/api/v1'
+    }
   },
 
   compatibilityDate: '2025-01-15',

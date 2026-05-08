@@ -7,7 +7,7 @@ const toast = useToast()
 
 const userId = computed(() => auth.claims.value?.userId ?? 0)
 
-const { data: user, refresh: refreshUser } = useAsyncData<User>(
+const { data: user } = useAsyncData<User>(
   'profile-user',
   () => api.getUser(userId.value),
   { watch: [userId] }

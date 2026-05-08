@@ -25,3 +25,6 @@ logs
 
 # Local agent instructions (never published)
 instructions/
+
+# Local agent worktrees
+.claude*

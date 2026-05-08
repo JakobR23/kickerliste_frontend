@@ -15,10 +15,9 @@ export function useApi() {
     baseURL: config.public.apiBaseUrl as string,
     onRequest({ options }) {
       if (auth.token.value) {
-        options.headers = {
-          ...(options.headers as unknown as Record<string, string>),
-          Authorization: `Bearer ${auth.token.value}`
-        }
+        const headers = new Headers(options.headers as HeadersInit)
+        headers.set('Authorization', `Bearer ${auth.token.value}`)
+        options.headers = headers
       }
     },
     async onResponseError({ response }) {

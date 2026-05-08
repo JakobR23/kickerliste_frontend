@@ -53,14 +53,23 @@ async function onSubmit() {
         <h1 class="text-xl font-semibold text-(--ui-text)">
           Passwort ändern
         </h1>
-        <p v-if="isForced" class="text-sm text-(--ui-text-muted) mt-1">
+        <p
+          v-if="isForced"
+          class="text-sm text-(--ui-text-muted) mt-1"
+        >
           Bitte lege ein neues Passwort fest, bevor du fortfährst.
         </p>
       </div>
     </template>
 
-    <form class="space-y-4" @submit.prevent="onSubmit">
-      <UFormField label="Aktuelles Passwort" name="currentPassword">
+    <form
+      class="space-y-4"
+      @submit.prevent="onSubmit"
+    >
+      <UFormField
+        label="Aktuelles Passwort"
+        name="currentPassword"
+      >
         <UInput
           v-model="state.currentPassword"
           type="password"
@@ -71,7 +80,10 @@ async function onSubmit() {
         />
       </UFormField>
 
-      <UFormField label="Neues Passwort" name="newPassword">
+      <UFormField
+        label="Neues Passwort"
+        name="newPassword"
+      >
         <UInput
           v-model="state.newPassword"
           type="password"
@@ -82,7 +94,10 @@ async function onSubmit() {
         />
       </UFormField>
 
-      <UFormField label="Neues Passwort wiederholen" name="newPasswordConfirm">
+      <UFormField
+        label="Neues Passwort wiederholen"
+        name="newPasswordConfirm"
+      >
         <UInput
           v-model="state.newPasswordConfirm"
           type="password"
@@ -101,7 +116,12 @@ async function onSubmit() {
         icon="i-lucide-circle-alert"
       />
 
-      <UButton type="submit" :loading="loading" block class="mt-2">
+      <UButton
+        type="submit"
+        :loading="loading"
+        block
+        class="mt-2"
+      >
         Passwort speichern
       </UButton>
     </form>

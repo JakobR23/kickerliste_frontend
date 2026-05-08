@@ -50,7 +50,10 @@ function formatDate(iso: string): string {
   <div class="p-4 lg:p-8 max-w-4xl mx-auto">
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
-        <UIcon name="i-lucide-users" class="w-6 h-6 text-amber-500" />
+        <UIcon
+          name="i-lucide-users"
+          class="w-6 h-6 text-amber-500"
+        />
         <h1 class="text-2xl font-bold text-(--ui-text)">
           Teams
         </h1>
@@ -65,8 +68,15 @@ function formatDate(iso: string): string {
     </div>
 
     <!-- Loading -->
-    <div v-if="pending" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div v-for="i in 3" :key="i" class="h-28 rounded-xl bg-(--ui-bg-elevated) animate-pulse" />
+    <div
+      v-if="pending"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+    >
+      <div
+        v-for="i in 3"
+        :key="i"
+        class="h-28 rounded-xl bg-(--ui-bg-elevated) animate-pulse"
+      />
     </div>
 
     <!-- Error -->
@@ -79,14 +89,22 @@ function formatDate(iso: string): string {
       icon="i-lucide-circle-alert"
     >
       <template #footer>
-        <UButton size="sm" variant="soft" color="error" @click="() => refresh()">
+        <UButton
+          size="sm"
+          variant="soft"
+          color="error"
+          @click="() => refresh()"
+        >
           Erneut versuchen
         </UButton>
       </template>
     </UAlert>
 
     <!-- Team grid -->
-    <div v-else-if="teams?.length" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div
+      v-else-if="teams?.length"
+      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+    >
       <NuxtLink
         v-for="team in teams"
         :key="team.id"
@@ -96,7 +114,10 @@ function formatDate(iso: string): string {
         <UCard class="hover:bg-(--ui-bg-accented) transition-colors cursor-pointer h-full">
           <div class="flex items-start gap-3">
             <div class="w-10 h-10 rounded-lg bg-amber-500/15 flex items-center justify-center flex-shrink-0">
-              <UIcon name="i-lucide-users" class="w-5 h-5 text-amber-500" />
+              <UIcon
+                name="i-lucide-users"
+                class="w-5 h-5 text-amber-500"
+              />
             </div>
             <div class="flex-1 min-w-0">
               <p class="font-semibold text-(--ui-text) truncate">
@@ -106,27 +127,46 @@ function formatDate(iso: string): string {
                 Erstellt: {{ formatDate(team.created_at) }}
               </p>
             </div>
-            <UIcon name="i-lucide-chevron-right" class="w-4 h-4 text-(--ui-text-dimmed) flex-shrink-0 mt-1" />
+            <UIcon
+              name="i-lucide-chevron-right"
+              class="w-4 h-4 text-(--ui-text-dimmed) flex-shrink-0 mt-1"
+            />
           </div>
         </UCard>
       </NuxtLink>
     </div>
 
     <!-- Empty -->
-    <div v-else class="text-center py-16 text-(--ui-text-muted)">
-      <UIcon name="i-lucide-users" class="w-10 h-10 mx-auto mb-3 opacity-40" />
+    <div
+      v-else
+      class="text-center py-16 text-(--ui-text-muted)"
+    >
+      <UIcon
+        name="i-lucide-users"
+        class="w-10 h-10 mx-auto mb-3 opacity-40"
+      />
       <p class="mb-4">
         Noch keine Teams vorhanden.
       </p>
-      <UButton icon="i-lucide-plus" variant="soft" @click="createModalOpen = true">
+      <UButton
+        icon="i-lucide-plus"
+        variant="soft"
+        @click="createModalOpen = true"
+      >
         Erstes Team erstellen
       </UButton>
     </div>
 
     <!-- Create team modal -->
-    <UModal v-model:open="createModalOpen" title="Team erstellen">
+    <UModal
+      v-model:open="createModalOpen"
+      title="Team erstellen"
+    >
       <template #body>
-        <UFormField label="Teamname" name="name">
+        <UFormField
+          label="Teamname"
+          name="name"
+        >
           <UInput
             v-model="newTeamName"
             placeholder="Name (optional)"
@@ -140,10 +180,17 @@ function formatDate(iso: string): string {
       </template>
       <template #footer>
         <div class="flex gap-3 justify-end w-full">
-          <UButton variant="ghost" color="neutral" @click="createModalOpen = false">
+          <UButton
+            variant="ghost"
+            color="neutral"
+            @click="createModalOpen = false"
+          >
             Abbrechen
           </UButton>
-          <UButton :loading="createLoading" @click="createTeam">
+          <UButton
+            :loading="createLoading"
+            @click="createTeam"
+          >
             Erstellen
           </UButton>
         </div>

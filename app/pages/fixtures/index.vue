@@ -54,7 +54,10 @@ function resultColor(result: string): 'success' | 'neutral' {
   <div class="p-4 lg:p-8 max-w-4xl mx-auto">
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
-        <UIcon name="i-lucide-calendar-days" class="w-6 h-6 text-amber-500" />
+        <UIcon
+          name="i-lucide-calendar-days"
+          class="w-6 h-6 text-amber-500"
+        />
         <h1 class="text-2xl font-bold text-(--ui-text)">
           Spielpläne
         </h1>
@@ -69,8 +72,15 @@ function resultColor(result: string): 'success' | 'neutral' {
     </div>
 
     <!-- Loading -->
-    <div v-if="pending" class="space-y-3">
-      <div v-for="i in 4" :key="i" class="h-20 rounded-xl bg-(--ui-bg-elevated) animate-pulse" />
+    <div
+      v-if="pending"
+      class="space-y-3"
+    >
+      <div
+        v-for="i in 4"
+        :key="i"
+        class="h-20 rounded-xl bg-(--ui-bg-elevated) animate-pulse"
+      />
     </div>
 
     <!-- Error -->
@@ -83,14 +93,22 @@ function resultColor(result: string): 'success' | 'neutral' {
       icon="i-lucide-circle-alert"
     >
       <template #footer>
-        <UButton size="sm" variant="soft" color="error" @click="() => refresh()">
+        <UButton
+          size="sm"
+          variant="soft"
+          color="error"
+          @click="() => refresh()"
+        >
           Erneut versuchen
         </UButton>
       </template>
     </UAlert>
 
     <!-- Fixture list -->
-    <div v-else-if="sorted.length" class="space-y-3">
+    <div
+      v-else-if="sorted.length"
+      class="space-y-3"
+    >
       <UCard
         v-for="f in sorted"
         :key="f.id"
@@ -107,7 +125,10 @@ function resultColor(result: string): 'success' | 'neutral' {
             </p>
           </div>
 
-          <USeparator orientation="vertical" class="h-10" />
+          <USeparator
+            orientation="vertical"
+            class="h-10"
+          />
 
           <!-- Teams -->
           <div class="flex-1 min-w-0">
@@ -132,7 +153,10 @@ function resultColor(result: string): 'success' | 'neutral' {
             </div>
 
             <!-- Scores -->
-            <div v-if="f.team1Score !== null && f.team2Score !== null" class="flex items-center gap-2 mt-1">
+            <div
+              v-if="f.team1Score !== null && f.team2Score !== null"
+              class="flex items-center gap-2 mt-1"
+            >
               <span class="text-lg font-bold tabular-nums text-(--ui-text)">{{ f.team1Score }}</span>
               <span class="text-(--ui-text-dimmed) text-sm">:</span>
               <span class="text-lg font-bold tabular-nums text-(--ui-text)">{{ f.team2Score }}</span>
@@ -152,12 +176,22 @@ function resultColor(result: string): 'success' | 'neutral' {
     </div>
 
     <!-- Empty -->
-    <div v-else class="text-center py-16 text-(--ui-text-muted)">
-      <UIcon name="i-lucide-calendar-days" class="w-10 h-10 mx-auto mb-3 opacity-40" />
+    <div
+      v-else
+      class="text-center py-16 text-(--ui-text-muted)"
+    >
+      <UIcon
+        name="i-lucide-calendar-days"
+        class="w-10 h-10 mx-auto mb-3 opacity-40"
+      />
       <p class="mb-4">
         Noch keine genehmigten Spiele vorhanden.
       </p>
-      <UButton to="/fixtures/new" icon="i-lucide-plus" variant="soft">
+      <UButton
+        to="/fixtures/new"
+        icon="i-lucide-plus"
+        variant="soft"
+      >
         Erstes Spiel einreichen
       </UButton>
     </div>

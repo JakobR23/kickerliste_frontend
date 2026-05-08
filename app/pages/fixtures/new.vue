@@ -91,21 +91,38 @@ async function onSubmit() {
         color="neutral"
         to="/fixtures"
       />
-      <UIcon name="i-lucide-plus-circle" class="w-6 h-6 text-amber-500" />
+      <UIcon
+        name="i-lucide-plus-circle"
+        class="w-6 h-6 text-amber-500"
+      />
       <h1 class="text-2xl font-bold text-(--ui-text)">
         Spiel einreichen
       </h1>
     </div>
 
     <UCard>
-      <div v-if="teamsLoading" class="py-8 text-center text-(--ui-text-muted)">
-        <UIcon name="i-lucide-loader-2" class="w-6 h-6 animate-spin mx-auto" />
+      <div
+        v-if="teamsLoading"
+        class="py-8 text-center text-(--ui-text-muted)"
+      >
+        <UIcon
+          name="i-lucide-loader-2"
+          class="w-6 h-6 animate-spin mx-auto"
+        />
       </div>
 
-      <form v-else class="space-y-5" @submit.prevent="onSubmit">
+      <form
+        v-else
+        class="space-y-5"
+        @submit.prevent="onSubmit"
+      >
         <!-- Teams -->
         <div class="grid grid-cols-2 gap-4">
-          <UFormField label="Team 1" name="team1Id" required>
+          <UFormField
+            label="Team 1"
+            name="team1Id"
+            required
+          >
             <USelect
               v-model="state.team1Id"
               :items="teamOptions"
@@ -113,7 +130,11 @@ async function onSubmit() {
               class="w-full"
             />
           </UFormField>
-          <UFormField label="Team 2" name="team2Id" required>
+          <UFormField
+            label="Team 2"
+            name="team2Id"
+            required
+          >
             <USelect
               v-model="state.team2Id"
               :items="teamOptions"
@@ -124,7 +145,11 @@ async function onSubmit() {
         </div>
 
         <!-- Result -->
-        <UFormField label="Ergebnis" name="result" required>
+        <UFormField
+          label="Ergebnis"
+          name="result"
+          required
+        >
           <USelect
             v-model="state.result"
             :items="resultOptions"
@@ -134,7 +159,10 @@ async function onSubmit() {
 
         <!-- Scores -->
         <div class="grid grid-cols-2 gap-4">
-          <UFormField label="Tore Team 1" name="team1Score">
+          <UFormField
+            label="Tore Team 1"
+            name="team1Score"
+          >
             <UInput
               v-model.number="state.team1Score"
               type="number"
@@ -143,7 +171,10 @@ async function onSubmit() {
               class="w-full"
             />
           </UFormField>
-          <UFormField label="Tore Team 2" name="team2Score">
+          <UFormField
+            label="Tore Team 2"
+            name="team2Score"
+          >
             <UInput
               v-model.number="state.team2Score"
               type="number"
@@ -156,7 +187,10 @@ async function onSubmit() {
 
         <!-- Value + Date -->
         <div class="grid grid-cols-2 gap-4">
-          <UFormField label="Spielwert (Punkte)" name="value">
+          <UFormField
+            label="Spielwert (Punkte)"
+            name="value"
+          >
             <UInput
               v-model.number="state.value"
               type="number"
@@ -164,7 +198,10 @@ async function onSubmit() {
               class="w-full"
             />
           </UFormField>
-          <UFormField label="Gespielt am" name="playedAt">
+          <UFormField
+            label="Gespielt am"
+            name="playedAt"
+          >
             <UInput
               v-model="state.playedAt"
               type="datetime-local"
@@ -189,10 +226,18 @@ async function onSubmit() {
         />
 
         <div class="flex gap-3 pt-2">
-          <UButton variant="ghost" color="neutral" to="/fixtures">
+          <UButton
+            variant="ghost"
+            color="neutral"
+            to="/fixtures"
+          >
             Abbrechen
           </UButton>
-          <UButton type="submit" :loading="loading" class="flex-1">
+          <UButton
+            type="submit"
+            :loading="loading"
+            class="flex-1"
+          >
             Einreichen
           </UButton>
         </div>

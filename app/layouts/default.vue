@@ -66,7 +66,10 @@ watch(route, () => {
           sidebarCollapsed ? 'lg:justify-center lg:px-0' : ''
         ]"
       >
-        <UIcon name="i-lucide-zap" class="w-6 h-6 text-amber-500 flex-shrink-0" />
+        <UIcon
+          name="i-lucide-zap"
+          class="w-6 h-6 text-amber-500 flex-shrink-0"
+        />
         <span
           :class="['font-bold text-lg truncate transition-all duration-300', sidebarCollapsed ? 'lg:hidden' : '']"
         >
@@ -77,7 +80,10 @@ watch(route, () => {
       <!-- Navigation -->
       <nav class="flex-1 overflow-y-auto py-3 px-2 space-y-0.5">
         <!-- Main items -->
-        <template v-for="item in navItems" :key="item.to">
+        <template
+          v-for="item in navItems"
+          :key="item.to"
+        >
           <NuxtLink
             :to="item.to"
             :title="sidebarCollapsed ? item.label : undefined"
@@ -89,7 +95,10 @@ watch(route, () => {
                 : 'text-(--ui-text-muted) hover:bg-(--ui-bg-accented) hover:text-(--ui-text)'
             ]"
           >
-            <UIcon :name="item.icon" class="w-5 h-5 flex-shrink-0" />
+            <UIcon
+              :name="item.icon"
+              class="w-5 h-5 flex-shrink-0"
+            />
             <span :class="['truncate', sidebarCollapsed ? 'lg:hidden' : '']">{{ item.label }}</span>
           </NuxtLink>
         </template>
@@ -105,10 +114,16 @@ watch(route, () => {
             >
               Administration
             </p>
-            <div v-if="sidebarCollapsed" class="hidden lg:block mx-3 mt-2 border-t border-(--ui-border)" />
+            <div
+              v-if="sidebarCollapsed"
+              class="hidden lg:block mx-3 mt-2 border-t border-(--ui-border)"
+            />
           </div>
 
-          <template v-for="item in adminNavItems" :key="item.to">
+          <template
+            v-for="item in adminNavItems"
+            :key="item.to"
+          >
             <NuxtLink
               :to="item.to"
               :title="sidebarCollapsed ? item.label : undefined"
@@ -120,7 +135,10 @@ watch(route, () => {
                   : 'text-(--ui-text-muted) hover:bg-(--ui-bg-accented) hover:text-(--ui-text)'
               ]"
             >
-              <UIcon :name="item.icon" class="w-5 h-5 flex-shrink-0" />
+              <UIcon
+                :name="item.icon"
+                class="w-5 h-5 flex-shrink-0"
+              />
               <span :class="['truncate', sidebarCollapsed ? 'lg:hidden' : '']">{{ item.label }}</span>
             </NuxtLink>
           </template>
@@ -180,7 +198,10 @@ watch(route, () => {
           ]"
           @click="logout"
         >
-          <UIcon name="i-lucide-log-out" class="w-5 h-5 flex-shrink-0" />
+          <UIcon
+            name="i-lucide-log-out"
+            class="w-5 h-5 flex-shrink-0"
+          />
           <span :class="['truncate', sidebarCollapsed ? 'lg:hidden' : '']">Abmelden</span>
         </button>
 
@@ -197,7 +218,10 @@ watch(route, () => {
             :name="sidebarCollapsed ? 'i-lucide-chevron-right' : 'i-lucide-chevron-left'"
             class="w-5 h-5 flex-shrink-0"
           />
-          <span v-if="!sidebarCollapsed" class="truncate">Einklappen</span>
+          <span
+            v-if="!sidebarCollapsed"
+            class="truncate"
+          >Einklappen</span>
         </button>
       </div>
     </aside>
@@ -213,7 +237,10 @@ watch(route, () => {
           size="sm"
           @click="sidebarOpen = !sidebarOpen"
         />
-        <UIcon name="i-lucide-zap" class="w-5 h-5 text-amber-500" />
+        <UIcon
+          name="i-lucide-zap"
+          class="w-5 h-5 text-amber-500"
+        />
         <span class="font-bold text-base">Kickerliste</span>
         <div class="flex-1" />
         <UButton

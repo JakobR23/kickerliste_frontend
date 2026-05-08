@@ -41,8 +41,14 @@ async function onSubmit() {
       </h1>
     </template>
 
-    <form class="space-y-4" @submit.prevent="onSubmit">
-      <UFormField label="Benutzername" name="username">
+    <form
+      class="space-y-4"
+      @submit.prevent="onSubmit"
+    >
+      <UFormField
+        label="Benutzername"
+        name="username"
+      >
         <UInput
           v-model="state.username"
           placeholder="Benutzername"
@@ -52,7 +58,10 @@ async function onSubmit() {
         />
       </UFormField>
 
-      <UFormField label="Passwort" name="password">
+      <UFormField
+        label="Passwort"
+        name="password"
+      >
         <UInput
           v-model="state.password"
           type="password"
@@ -71,7 +80,12 @@ async function onSubmit() {
         icon="i-lucide-circle-alert"
       />
 
-      <UButton type="submit" :loading="loading" block class="mt-2">
+      <UButton
+        type="submit"
+        :loading="loading"
+        block
+        class="mt-2"
+      >
         Anmelden
       </UButton>
     </form>
@@ -79,7 +93,10 @@ async function onSubmit() {
     <template #footer>
       <p class="text-sm text-center text-(--ui-text-muted)">
         Noch kein Konto?
-        <NuxtLink to="/register" class="text-amber-500 hover:text-amber-400 font-medium">
+        <NuxtLink
+          to="/register"
+          class="text-amber-500 hover:text-amber-400 font-medium"
+        >
           Registrieren
         </NuxtLink>
       </p>

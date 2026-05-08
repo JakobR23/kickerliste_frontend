@@ -122,8 +122,16 @@ function formatScore(score: number): string {
   <div class="p-4 lg:p-8 max-w-2xl mx-auto">
     <!-- Header -->
     <div class="flex items-center gap-3 mb-6">
-      <UButton icon="i-lucide-arrow-left" variant="ghost" color="neutral" to="/teams" />
-      <UIcon name="i-lucide-users" class="w-6 h-6 text-amber-500" />
+      <UButton
+        icon="i-lucide-arrow-left"
+        variant="ghost"
+        color="neutral"
+        to="/teams"
+      />
+      <UIcon
+        name="i-lucide-users"
+        class="w-6 h-6 text-amber-500"
+      />
       <h1 class="text-2xl font-bold text-(--ui-text) truncate">
         {{ team?.name ?? `Team #${teamId}` }}
       </h1>
@@ -155,7 +163,10 @@ function formatScore(score: number): string {
         </div>
       </template>
 
-      <div v-if="members?.length" class="space-y-3">
+      <div
+        v-if="members?.length"
+        class="space-y-3"
+      >
         <div
           v-for="member in members"
           :key="member.id"
@@ -185,8 +196,14 @@ function formatScore(score: number): string {
         </div>
       </div>
 
-      <div v-else class="py-6 text-center text-(--ui-text-muted)">
-        <UIcon name="i-lucide-user-x" class="w-8 h-8 mx-auto mb-2 opacity-40" />
+      <div
+        v-else
+        class="py-6 text-center text-(--ui-text-muted)"
+      >
+        <UIcon
+          name="i-lucide-user-x"
+          class="w-8 h-8 mx-auto mb-2 opacity-40"
+        />
         <p class="text-sm">
           Noch keine Mitglieder.
         </p>
@@ -203,9 +220,15 @@ function formatScore(score: number): string {
     </UCard>
 
     <!-- Edit name modal -->
-    <UModal v-model:open="editNameOpen" title="Teamname bearbeiten">
+    <UModal
+      v-model:open="editNameOpen"
+      title="Teamname bearbeiten"
+    >
       <template #body>
-        <UFormField label="Teamname" name="name">
+        <UFormField
+          label="Teamname"
+          name="name"
+        >
           <UInput
             v-model="newName"
             placeholder="Name (optional, leer = kein Name)"
@@ -216,10 +239,17 @@ function formatScore(score: number): string {
       </template>
       <template #footer>
         <div class="flex gap-3 justify-end w-full">
-          <UButton variant="ghost" color="neutral" @click="editNameOpen = false">
+          <UButton
+            variant="ghost"
+            color="neutral"
+            @click="editNameOpen = false"
+          >
             Abbrechen
           </UButton>
-          <UButton :loading="editLoading" @click="saveTeamName">
+          <UButton
+            :loading="editLoading"
+            @click="saveTeamName"
+          >
             Speichern
           </UButton>
         </div>
@@ -227,9 +257,15 @@ function formatScore(score: number): string {
     </UModal>
 
     <!-- Add member modal -->
-    <UModal v-model:open="addMemberOpen" title="Mitglied hinzufügen">
+    <UModal
+      v-model:open="addMemberOpen"
+      title="Mitglied hinzufügen"
+    >
       <template #body>
-        <UFormField label="Spieler" name="userId">
+        <UFormField
+          label="Spieler"
+          name="userId"
+        >
           <USelect
             v-model="selectedUserId"
             :items="availableUsers"
@@ -237,13 +273,20 @@ function formatScore(score: number): string {
             class="w-full"
           />
         </UFormField>
-        <p v-if="availableUsers.length === 0" class="text-sm text-(--ui-text-muted) mt-2">
+        <p
+          v-if="availableUsers.length === 0"
+          class="text-sm text-(--ui-text-muted) mt-2"
+        >
           Keine weiteren Spieler verfügbar.
         </p>
       </template>
       <template #footer>
         <div class="flex gap-3 justify-end w-full">
-          <UButton variant="ghost" color="neutral" @click="addMemberOpen = false">
+          <UButton
+            variant="ghost"
+            color="neutral"
+            @click="addMemberOpen = false"
+          >
             Abbrechen
           </UButton>
           <UButton

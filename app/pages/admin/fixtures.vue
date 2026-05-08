@@ -123,7 +123,10 @@ const resultLabels = {
 <template>
   <div class="p-4 lg:p-8 max-w-2xl mx-auto">
     <div class="flex items-center gap-3 mb-6">
-      <UIcon name="i-lucide-clipboard-check" class="w-6 h-6 text-amber-500" />
+      <UIcon
+        name="i-lucide-clipboard-check"
+        class="w-6 h-6 text-amber-500"
+      />
       <h1 class="text-2xl font-bold text-(--ui-text)">
         Spielüberprüfung
       </h1>
@@ -141,7 +144,11 @@ const resultLabels = {
     <!-- Lookup form -->
     <UCard class="mb-6">
       <div class="flex gap-3">
-        <UFormField label="Spiel-ID" name="fixtureId" class="flex-1">
+        <UFormField
+          label="Spiel-ID"
+          name="fixtureId"
+          class="flex-1"
+        >
           <UInput
             v-model.number="lookupId"
             type="number"
@@ -240,7 +247,10 @@ const resultLabels = {
         </div>
 
         <!-- Actions (only for pending) -->
-        <div v-if="lookedUpFixture.status === 'pending'" class="flex gap-3 pt-4 border-t border-(--ui-border)">
+        <div
+          v-if="lookedUpFixture.status === 'pending'"
+          class="flex gap-3 pt-4 border-t border-(--ui-border)"
+        >
           <UButton
             color="error"
             variant="soft"

@@ -194,7 +194,10 @@ function formatDate(iso: string): string {
   <div class="p-4 lg:p-8 max-w-4xl mx-auto">
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center gap-3">
-        <UIcon name="i-lucide-user-cog" class="w-6 h-6 text-amber-500" />
+        <UIcon
+          name="i-lucide-user-cog"
+          class="w-6 h-6 text-amber-500"
+        />
         <h1 class="text-2xl font-bold text-(--ui-text)">
           Benutzerverwaltung
         </h1>
@@ -215,7 +218,11 @@ function formatDate(iso: string): string {
         :key="user.id"
         class="flex items-center gap-4 px-4 py-3 rounded-xl border border-(--ui-border) bg-(--ui-bg-elevated) hover:bg-(--ui-bg-accented) transition-colors"
       >
-        <UAvatar :alt="user.username" size="sm" class="ring-1 ring-(--ui-border) flex-shrink-0" />
+        <UAvatar
+          :alt="user.username"
+          size="sm"
+          class="ring-1 ring-(--ui-border) flex-shrink-0"
+        />
 
         <div class="flex-1 min-w-0">
           <div class="flex items-center gap-2">
@@ -269,14 +276,23 @@ function formatDate(iso: string): string {
         </div>
       </div>
 
-      <div v-if="!sorted.length" class="text-center py-12 text-(--ui-text-muted)">
-        <UIcon name="i-lucide-users" class="w-10 h-10 mx-auto mb-3 opacity-40" />
+      <div
+        v-if="!sorted.length"
+        class="text-center py-12 text-(--ui-text-muted)"
+      >
+        <UIcon
+          name="i-lucide-users"
+          class="w-10 h-10 mx-auto mb-3 opacity-40"
+        />
         <p>Keine Benutzer vorhanden.</p>
       </div>
     </div>
 
     <!-- Create user modal -->
-    <UModal v-model:open="createOpen" title="Neuen Benutzer erstellen">
+    <UModal
+      v-model:open="createOpen"
+      title="Neuen Benutzer erstellen"
+    >
       <template #body>
         <div class="space-y-4">
           <UAlert
@@ -285,10 +301,20 @@ function formatDate(iso: string): string {
             icon="i-lucide-info"
             description="Admin-erstellte Konten müssen beim ersten Login ein neues Passwort vergeben."
           />
-          <UFormField label="Benutzername" name="username">
-            <UInput v-model="createState.username" placeholder="Benutzername" class="w-full" />
+          <UFormField
+            label="Benutzername"
+            name="username"
+          >
+            <UInput
+              v-model="createState.username"
+              placeholder="Benutzername"
+              class="w-full"
+            />
           </UFormField>
-          <UFormField label="Temporäres Passwort" name="password">
+          <UFormField
+            label="Temporäres Passwort"
+            name="password"
+          >
             <UInput
               v-model="createState.password"
               type="password"
@@ -307,10 +333,17 @@ function formatDate(iso: string): string {
       </template>
       <template #footer>
         <div class="flex gap-3 justify-end w-full">
-          <UButton variant="ghost" color="neutral" @click="createOpen = false">
+          <UButton
+            variant="ghost"
+            color="neutral"
+            @click="createOpen = false"
+          >
             Abbrechen
           </UButton>
-          <UButton :loading="createLoading" @click="createUser">
+          <UButton
+            :loading="createLoading"
+            @click="createUser"
+          >
             Erstellen
           </UButton>
         </div>
@@ -318,9 +351,15 @@ function formatDate(iso: string): string {
     </UModal>
 
     <!-- Edit username modal -->
-    <UModal v-model:open="editOpen" title="Benutzername bearbeiten">
+    <UModal
+      v-model:open="editOpen"
+      title="Benutzername bearbeiten"
+    >
       <template #body>
-        <UFormField label="Neuer Benutzername" name="username">
+        <UFormField
+          label="Neuer Benutzername"
+          name="username"
+        >
           <UInput
             v-model="editUsername"
             placeholder="Benutzername"
@@ -331,10 +370,17 @@ function formatDate(iso: string): string {
       </template>
       <template #footer>
         <div class="flex gap-3 justify-end w-full">
-          <UButton variant="ghost" color="neutral" @click="editOpen = false">
+          <UButton
+            variant="ghost"
+            color="neutral"
+            @click="editOpen = false"
+          >
             Abbrechen
           </UButton>
-          <UButton :loading="editLoading" @click="saveUsername">
+          <UButton
+            :loading="editLoading"
+            @click="saveUsername"
+          >
             Speichern
           </UButton>
         </div>
@@ -342,7 +388,10 @@ function formatDate(iso: string): string {
     </UModal>
 
     <!-- Delete confirm modal -->
-    <UModal v-model:open="deleteOpen" title="Benutzer löschen">
+    <UModal
+      v-model:open="deleteOpen"
+      title="Benutzer löschen"
+    >
       <template #body>
         <p class="text-(--ui-text)">
           Möchtest du den Benutzer
@@ -352,10 +401,18 @@ function formatDate(iso: string): string {
       </template>
       <template #footer>
         <div class="flex gap-3 justify-end w-full">
-          <UButton variant="ghost" color="neutral" @click="deleteOpen = false">
+          <UButton
+            variant="ghost"
+            color="neutral"
+            @click="deleteOpen = false"
+          >
             Abbrechen
           </UButton>
-          <UButton color="error" :loading="deleteLoading" @click="confirmDelete">
+          <UButton
+            color="error"
+            :loading="deleteLoading"
+            @click="confirmDelete"
+          >
             Löschen
           </UButton>
         </div>
@@ -370,7 +427,10 @@ function formatDate(iso: string): string {
       <template #body>
         <div class="space-y-4">
           <div class="grid grid-cols-2 gap-4">
-            <UFormField label="Betrag" name="amount">
+            <UFormField
+              label="Betrag"
+              name="amount"
+            >
               <UInput
                 v-model.number="adjState.amount"
                 type="number"
@@ -384,7 +444,10 @@ function formatDate(iso: string): string {
               </p>
             </div>
           </div>
-          <UFormField label="Begründung" name="reason">
+          <UFormField
+            label="Begründung"
+            name="reason"
+          >
             <UInput
               v-model="adjState.reason"
               placeholder="Grund für die Korrektur"
@@ -400,7 +463,10 @@ function formatDate(iso: string): string {
           />
 
           <!-- History -->
-          <div v-if="adjHistory.length" class="pt-2">
+          <div
+            v-if="adjHistory.length"
+            class="pt-2"
+          >
             <p class="text-xs font-semibold uppercase tracking-wider text-(--ui-text-dimmed) mb-2">
               Verlauf
             </p>
@@ -428,17 +494,27 @@ function formatDate(iso: string): string {
               </div>
             </div>
           </div>
-          <div v-else-if="!adjHistoryLoading" class="text-xs text-(--ui-text-dimmed)">
+          <div
+            v-else-if="!adjHistoryLoading"
+            class="text-xs text-(--ui-text-dimmed)"
+          >
             Noch keine Korrekturen vorhanden.
           </div>
         </div>
       </template>
       <template #footer>
         <div class="flex gap-3 justify-end w-full">
-          <UButton variant="ghost" color="neutral" @click="adjOpen = false">
+          <UButton
+            variant="ghost"
+            color="neutral"
+            @click="adjOpen = false"
+          >
             Schließen
           </UButton>
-          <UButton :loading="adjLoading" @click="saveAdjustment">
+          <UButton
+            :loading="adjLoading"
+            @click="saveAdjustment"
+          >
             Korrektur speichern
           </UButton>
         </div>

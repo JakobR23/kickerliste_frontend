@@ -19,7 +19,10 @@ const colorMode = useColorMode()
 
     <!-- Logo -->
     <div class="flex items-center gap-2 mb-8">
-      <UIcon name="i-lucide-zap" class="w-8 h-8 text-amber-500" />
+      <UIcon
+        name="i-lucide-zap"
+        class="w-8 h-8 text-amber-500"
+      />
       <span class="font-bold text-2xl text-(--ui-text)">Kickerliste</span>
     </div>
 

@@ -27,14 +27,20 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
 <template>
   <div class="p-4 lg:p-8 max-w-3xl mx-auto">
     <div class="flex items-center gap-3 mb-6">
-      <UIcon name="i-lucide-trophy" class="w-6 h-6 text-amber-500" />
+      <UIcon
+        name="i-lucide-trophy"
+        class="w-6 h-6 text-amber-500"
+      />
       <h1 class="text-2xl font-bold text-(--ui-text)">
         Rangliste
       </h1>
     </div>
 
     <!-- Loading -->
-    <div v-if="pending" class="space-y-3">
+    <div
+      v-if="pending"
+      class="space-y-3"
+    >
       <div
         v-for="i in 5"
         :key="i"
@@ -52,14 +58,22 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
       icon="i-lucide-circle-alert"
     >
       <template #footer>
-        <UButton size="sm" variant="soft" color="error" @click="() => refresh()">
+        <UButton
+          size="sm"
+          variant="soft"
+          color="error"
+          @click="() => refresh()"
+        >
           Erneut versuchen
         </UButton>
       </template>
     </UAlert>
 
     <!-- Leaderboard -->
-    <div v-else-if="sorted.length" class="space-y-2">
+    <div
+      v-else-if="sorted.length"
+      class="space-y-2"
+    >
       <div
         v-for="(user, index) in sorted"
         :key="user.id"
@@ -77,7 +91,10 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
             :name="medalIcons[index]"
             :class="['w-5 h-5', medalColors[index]]"
           />
-          <span v-else class="text-sm font-semibold text-(--ui-text-dimmed)">
+          <span
+            v-else
+            class="text-sm font-semibold text-(--ui-text-dimmed)"
+          >
             {{ index + 1 }}
           </span>
         </div>
@@ -121,8 +138,14 @@ const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
     </div>
 
     <!-- Empty -->
-    <div v-else class="text-center py-16 text-(--ui-text-muted)">
-      <UIcon name="i-lucide-users" class="w-10 h-10 mx-auto mb-3 opacity-40" />
+    <div
+      v-else
+      class="text-center py-16 text-(--ui-text-muted)"
+    >
+      <UIcon
+        name="i-lucide-users"
+        class="w-10 h-10 mx-auto mb-3 opacity-40"
+      />
       <p>
         Noch keine Spieler vorhanden.
       </p>

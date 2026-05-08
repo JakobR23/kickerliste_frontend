@@ -71,7 +71,10 @@ function formatDate(iso: string): string {
 <template>
   <div class="p-4 lg:p-8 max-w-2xl mx-auto space-y-6">
     <div class="flex items-center gap-3 mb-6">
-      <UIcon name="i-lucide-user" class="w-6 h-6 text-amber-500" />
+      <UIcon
+        name="i-lucide-user"
+        class="w-6 h-6 text-amber-500"
+      />
       <h1 class="text-2xl font-bold text-(--ui-text)">
         Profil
       </h1>
@@ -116,8 +119,14 @@ function formatDate(iso: string): string {
         </h2>
       </template>
 
-      <form class="space-y-4" @submit.prevent="changePassword">
-        <UFormField label="Aktuelles Passwort" name="currentPassword">
+      <form
+        class="space-y-4"
+        @submit.prevent="changePassword"
+      >
+        <UFormField
+          label="Aktuelles Passwort"
+          name="currentPassword"
+        >
           <UInput
             v-model="pwState.currentPassword"
             type="password"
@@ -127,7 +136,10 @@ function formatDate(iso: string): string {
             class="w-full"
           />
         </UFormField>
-        <UFormField label="Neues Passwort" name="newPassword">
+        <UFormField
+          label="Neues Passwort"
+          name="newPassword"
+        >
           <UInput
             v-model="pwState.newPassword"
             type="password"
@@ -137,7 +149,10 @@ function formatDate(iso: string): string {
             class="w-full"
           />
         </UFormField>
-        <UFormField label="Neues Passwort wiederholen" name="newPasswordConfirm">
+        <UFormField
+          label="Neues Passwort wiederholen"
+          name="newPasswordConfirm"
+        >
           <UInput
             v-model="pwState.newPasswordConfirm"
             type="password"
@@ -156,7 +171,10 @@ function formatDate(iso: string): string {
           icon="i-lucide-circle-alert"
         />
 
-        <UButton type="submit" :loading="pwLoading">
+        <UButton
+          type="submit"
+          :loading="pwLoading"
+        >
           Passwort speichern
         </UButton>
       </form>

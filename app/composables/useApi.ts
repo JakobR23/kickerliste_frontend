@@ -70,8 +70,8 @@ export function useApi() {
       client<Fixture[]>('/fixtures', {
         query: {
           ...(teamId && { teamId }),
-          ...(status && { status }),
-        },
+          ...(status && { status })
+        }
       }),
     getFixture: (id: number) =>
       client<Fixture>(`/fixtures/${id}`),

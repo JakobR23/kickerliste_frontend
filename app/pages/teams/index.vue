@@ -38,7 +38,6 @@ async function createTeam() {
     createLoading.value = false
   }
 }
-
 </script>
 
 <template>

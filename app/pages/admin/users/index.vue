@@ -4,6 +4,7 @@ import { useAsyncData, useToast, navigateTo } from '#imports'
 import { useAuthStore } from '~/composables/useAuthStore'
 import { useApi } from '~/composables/useApi'
 import type { User, ScoreAdjustment } from '~/types/api'
+import { formatDate, formatScore } from '~/utils/format'
 
 const auth = useAuthStore()
 const api = useApi()
@@ -194,7 +195,6 @@ async function saveAdjustment() {
     adjLoading.value = false
   }
 }
-
 </script>
 
 <template>

@@ -3,6 +3,7 @@ import { computed, ref } from 'vue'
 import { useRoute, useAsyncData, useToast } from '#imports'
 import { useApi } from '~/composables/useApi'
 import type { Team, User } from '~/types/api'
+import { formatScore } from '~/utils/format'
 
 const route = useRoute()
 const api = useApi()
@@ -118,7 +119,6 @@ async function removeMember(userId: number) {
     removingId.value = null
   }
 }
-
 </script>
 
 <template>

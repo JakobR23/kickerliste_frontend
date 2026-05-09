@@ -4,6 +4,7 @@ import { useAsyncData } from '#imports'
 import { useApi } from '~/composables/useApi'
 import { useTeamMap } from '~/composables/useTeamMap'
 import type { Fixture, Team } from '~/types/api'
+import { formatDate, resultColor } from '~/utils/format'
 
 const api = useApi()
 
@@ -21,7 +22,6 @@ const sorted = computed(() => {
     (a, b) => new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime()
   )
 })
-
 </script>
 
 <template>

@@ -76,8 +76,6 @@ async function reject(id: number) {
     actionLoading.value = null
   }
 }
-
-
 </script>
 
 <template>

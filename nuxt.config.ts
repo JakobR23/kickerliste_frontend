@@ -19,13 +19,13 @@ export default defineNuxtConfig({
     }
   },
 
-  compatibilityDate: '2025-01-15',
-
   experimental: {
     // Prevents duplicate useAppConfig auto-import warning (nitropack vs @nuxt/nitro-server).
     // Safe to disable: this app is SPA-only with no Nitro server routes.
     serverAppConfig: false
   },
+
+  compatibilityDate: '2025-01-15',
 
   eslint: {
     config: {

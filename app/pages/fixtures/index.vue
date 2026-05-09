@@ -22,18 +22,6 @@ const sorted = computed(() => {
   )
 })
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('de-DE', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  })
-}
-
-function resultColor(result: string): 'success' | 'neutral' {
-  if (result === 'draw') return 'neutral'
-  return 'success'
-}
 </script>
 
 <template>

@@ -77,15 +77,6 @@ async function reject(id: number) {
   }
 }
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('de-DE', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
 
 </script>
 
@@ -135,7 +126,7 @@ function formatDate(iso: string): string {
           <!-- Date + ID -->
           <div class="shrink-0 text-center w-16">
             <p class="text-xs text-dimmed font-medium leading-snug">
-              {{ formatDate(f.playedAt) }}
+              {{ formatDateTime(f.playedAt) }}
             </p>
             <p class="text-xs text-dimmed mt-1">
               #{{ f.id }}

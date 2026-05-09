@@ -16,10 +16,6 @@ const sorted = computed(() => {
   return [...users.value].sort((a, b) => b.totalScore - a.totalScore)
 })
 
-function formatScore(score: number): string {
-  return Number.isInteger(score) ? String(score) : score.toFixed(1)
-}
-
 const medalColors = ['text-amber-400', 'text-zinc-400', 'text-amber-700']
 const medalIcons = ['i-lucide-medal', 'i-lucide-medal', 'i-lucide-medal']
 </script>

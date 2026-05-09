@@ -119,9 +119,6 @@ async function removeMember(userId: number) {
   }
 }
 
-function formatScore(score: number): string {
-  return Number.isInteger(score) ? String(score) : score.toFixed(1)
-}
 </script>
 
 <template>

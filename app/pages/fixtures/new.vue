@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { reactive, ref } from 'vue'
 import { useAsyncData, useToast, navigateTo } from '#imports'
 import { useApi } from '~/composables/useApi'
+import { useTeamMap } from '~/composables/useTeamMap'
 import type { Team } from '~/types/api'
 
 const api = useApi()
@@ -12,12 +13,7 @@ const { data: teams, pending: teamsLoading } = useAsyncData<Team[]>(
   () => api.getTeams()
 )
 
-const teamOptions = computed(() =>
-  (teams.value ?? []).map(t => ({
-    label: t.name ?? `Team #${t.id}`,
-    value: t.id
-  }))
-)
+const { teamOptions } = useTeamMap(teams)
 
 const resultOptions = [
   { label: 'Team 1 gewinnt', value: 'team_1' },

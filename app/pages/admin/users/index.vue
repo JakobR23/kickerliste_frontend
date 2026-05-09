@@ -195,17 +195,6 @@ async function saveAdjustment() {
   }
 }
 
-function formatScore(score: number): string {
-  return Number.isInteger(score) ? String(score) : score.toFixed(1)
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('de-DE', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  })
-}
 </script>
 
 <template>

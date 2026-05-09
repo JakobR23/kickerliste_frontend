@@ -9,6 +9,13 @@ export function useTeamMap(teams: Ref<Team[] | null | undefined>) {
     return map
   })
 
+  const teamOptions = computed(() =>
+    (teams.value ?? []).map(t => ({
+      label: t.name ?? `Team #${t.id}`,
+      value: t.id
+    }))
+  )
+
   function teamName(id: number): string {
     return teamMap.value.get(id) ?? `Team #${id}`
   }
@@ -19,5 +26,5 @@ export function useTeamMap(teams: Ref<Team[] | null | undefined>) {
     return `${winnerName} gewinnt`
   }
 
-  return { teamName, resultLabel }
+  return { teamName, teamOptions, resultLabel }
 }

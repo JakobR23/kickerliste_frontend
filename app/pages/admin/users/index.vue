@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, reactive, computed, onMounted } from 'vue'
+import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useAsyncData, useToast, navigateTo } from '#imports'
 import { useAuthStore } from '~/composables/useAuthStore'
 import { useApi } from '~/composables/useApi'
@@ -138,6 +138,15 @@ const adjLoading = ref(false)
 const adjHistory = ref<ScoreAdjustment[]>([])
 const adjHistoryLoading = ref(false)
 
+// Reset loading/error state whenever the modal is dismissed
+watch(adjOpen, (isOpen) => {
+  if (!isOpen) {
+    adjLoading.value = false
+    adjHistoryLoading.value = false
+    adjError.value = ''
+  }
+})
+
 async function openAdjustment(user: User) {
   adjTarget.value = user
   Object.assign(adjState, { amount: 0, reason: '' })
@@ -174,6 +183,7 @@ async function saveAdjustment() {
     const adj = await api.getAdjustments(adjTarget.value.id)
     adjHistory.value = adj
     Object.assign(adjState, { amount: 0, reason: '' })
+    adjOpen.value = false
     toast.add({ title: 'Punktekorrektur gespeichert', color: 'success', icon: 'i-lucide-check-circle' })
   } catch (e: unknown) {
     const err = e as { data?: { message?: string }, status?: number }

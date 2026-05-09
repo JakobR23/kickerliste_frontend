@@ -3,6 +3,7 @@ import { ref, computed, onMounted } from 'vue'
 import { useAsyncData, useToast, navigateTo } from '#imports'
 import { useAuthStore } from '~/composables/useAuthStore'
 import { useApi } from '~/composables/useApi'
+import { useTeamMap } from '~/composables/useTeamMap'
 import type { Fixture, Team } from '~/types/api'
 
 const auth = useAuthStore()
@@ -15,16 +16,7 @@ onMounted(() => {
 })
 
 const { data: teams } = useAsyncData<Team[]>('teams-admin-fixtures', () => api.getTeams())
-
-const teamMap = computed(() => {
-  const map = new Map<number, string>()
-  teams.value?.forEach(t => map.set(t.id, t.name ?? `Team #${t.id}`))
-  return map
-})
-
-function teamName(id: number): string {
-  return teamMap.value.get(id) ?? `Team #${id}`
-}
+const { teamName, resultLabel } = useTeamMap(teams)
 
 const { data: pendingFixtures, pending: loading, refresh } = useAsyncData<Fixture[]>(
   'admin-pending-fixtures',
@@ -95,11 +87,6 @@ function formatDate(iso: string): string {
   })
 }
 
-const resultLabels: Record<string, string> = {
-  team_1: 'Team 1 gewinnt',
-  team_2: 'Team 2 gewinnt',
-  draw: 'Unentschieden'
-}
 </script>
 
 <template>
@@ -172,7 +159,7 @@ const resultLabels: Record<string, string> = {
               </span>
             </div>
             <p class="text-xs text-dimmed mt-1">
-              {{ resultLabels[f.result] }} · Wert: {{ f.value }}
+              {{ resultLabel(f) }} · Wert: {{ f.value }}
               <span v-if="f.team1Score !== null && f.team2Score !== null">
                 · {{ f.team1Score }}:{{ f.team2Score }}
               </span>

@@ -51,9 +51,11 @@ async function changePassword() {
     toast.add({ title: 'Passwort geändert', color: 'success', icon: 'i-lucide-check-circle' })
   } catch (e: unknown) {
     const err = e as { data?: { message?: string }, status?: number }
-    pwError.value = err.status === 422
-      ? 'Das aktuelle Passwort ist falsch.'
-      : (err.data?.message ?? 'Fehler beim Ändern des Passworts.')
+    pwError.value = err.status === 500
+      ? 'Serverfehler. Bitte erneut versuchen.'
+      : err.status === 422
+        ? 'Das aktuelle Passwort ist falsch.'
+        : (err.data?.message ?? 'Fehler beim Ändern des Passworts.')
   } finally {
     pwLoading.value = false
   }

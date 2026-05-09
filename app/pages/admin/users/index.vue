@@ -49,9 +49,11 @@ async function createUser() {
     await refreshUsers()
   } catch (e: unknown) {
     const err = e as { status?: number, data?: { message?: string } }
-    createError.value = err.status === 409
-      ? 'Dieser Benutzername ist bereits vergeben.'
-      : (err.data?.message ?? 'Fehler beim Erstellen des Benutzers.')
+    createError.value = err.status === 500
+      ? 'Serverfehler. Bitte erneut versuchen.'
+      : err.status === 409
+        ? 'Dieser Benutzername ist bereits vergeben.'
+        : (err.data?.message ?? 'Fehler beim Erstellen des Benutzers.')
   } finally {
     createLoading.value = false
   }
@@ -81,9 +83,11 @@ async function saveUsername() {
     const err = e as { status?: number, data?: { message?: string } }
     toast.add({
       title: 'Fehler',
-      description: err.status === 409
-        ? 'Benutzername bereits vergeben.'
-        : (err.data?.message ?? 'Fehler beim Speichern.'),
+      description: err.status === 500
+        ? 'Serverfehler. Bitte erneut versuchen.'
+        : err.status === 409
+          ? 'Benutzername bereits vergeben.'
+          : (err.data?.message ?? 'Fehler beim Speichern.'),
       color: 'error',
       icon: 'i-lucide-circle-alert'
     })
@@ -111,10 +115,12 @@ async function confirmDelete() {
     deleteOpen.value = false
     toast.add({ title: 'Benutzer gelöscht', color: 'success', icon: 'i-lucide-check-circle' })
   } catch (e: unknown) {
-    const err = e as { data?: { message?: string } }
+    const err = e as { data?: { message?: string }, status?: number }
     toast.add({
       title: 'Fehler',
-      description: err.data?.message ?? 'Benutzer konnte nicht gelöscht werden.',
+      description: err.status === 500
+        ? 'Serverfehler. Bitte erneut versuchen.'
+        : (err.data?.message ?? 'Benutzer konnte nicht gelöscht werden.'),
       color: 'error',
       icon: 'i-lucide-circle-alert'
     })
@@ -170,8 +176,10 @@ async function saveAdjustment() {
     Object.assign(adjState, { amount: 0, reason: '' })
     toast.add({ title: 'Punktekorrektur gespeichert', color: 'success', icon: 'i-lucide-check-circle' })
   } catch (e: unknown) {
-    const err = e as { data?: { message?: string } }
-    adjError.value = err.data?.message ?? 'Fehler beim Speichern.'
+    const err = e as { data?: { message?: string }, status?: number }
+    adjError.value = err.status === 500
+      ? 'Serverfehler. Bitte erneut versuchen.'
+      : (err.data?.message ?? 'Fehler beim Speichern.')
   } finally {
     adjLoading.value = false
   }

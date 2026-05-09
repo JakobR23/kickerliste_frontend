@@ -49,9 +49,11 @@ async function approve(id: number) {
     const err = e as { status?: number, data?: { message?: string } }
     toast.add({
       title: 'Fehler',
-      description: err.status === 409
-        ? 'Das Spiel wurde bereits überprüft.'
-        : (err.data?.message ?? 'Genehmigung fehlgeschlagen.'),
+      description: err.status === 500
+        ? 'Serverfehler. Bitte erneut versuchen.'
+        : err.status === 409
+          ? 'Das Spiel wurde bereits überprüft.'
+          : (err.data?.message ?? 'Genehmigung fehlgeschlagen.'),
       color: 'error',
       icon: 'i-lucide-circle-alert'
     })
@@ -70,9 +72,11 @@ async function reject(id: number) {
     const err = e as { status?: number, data?: { message?: string } }
     toast.add({
       title: 'Fehler',
-      description: err.status === 409
-        ? 'Das Spiel wurde bereits überprüft.'
-        : (err.data?.message ?? 'Ablehnung fehlgeschlagen.'),
+      description: err.status === 500
+        ? 'Serverfehler. Bitte erneut versuchen.'
+        : err.status === 409
+          ? 'Das Spiel wurde bereits überprüft.'
+          : (err.data?.message ?? 'Ablehnung fehlgeschlagen.'),
       color: 'error',
       icon: 'i-lucide-circle-alert'
     })

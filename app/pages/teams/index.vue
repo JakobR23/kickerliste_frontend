@@ -25,10 +25,12 @@ async function createTeam() {
     createModalOpen.value = false
     await refresh()
   } catch (e: unknown) {
-    const err = e as { data?: { message?: string } }
+    const err = e as { data?: { message?: string }, status?: number }
     toast.add({
       title: 'Fehler',
-      description: err.data?.message ?? 'Team konnte nicht erstellt werden.',
+      description: err.status === 500
+        ? 'Serverfehler. Bitte erneut versuchen.'
+        : (err.data?.message ?? 'Team konnte nicht erstellt werden.'),
       color: 'error',
       icon: 'i-lucide-circle-alert'
     })

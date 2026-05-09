@@ -32,6 +32,8 @@ async function onSubmit() {
     const err = e as { data?: { message?: string }, status?: number }
     if (err.status === 409) {
       errorMsg.value = 'Dieser Benutzername ist bereits vergeben.'
+    } else if (err.status === 500) {
+      errorMsg.value = 'Serverfehler. Bitte erneut versuchen.'
     } else {
       errorMsg.value = err.data?.message ?? 'Registrierung fehlgeschlagen.'
     }

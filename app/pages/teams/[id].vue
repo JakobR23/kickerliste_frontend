@@ -40,10 +40,12 @@ async function saveTeamName() {
     editNameOpen.value = false
     toast.add({ title: 'Teamname geändert', color: 'success', icon: 'i-lucide-check-circle' })
   } catch (e: unknown) {
-    const err = e as { data?: { message?: string } }
+    const err = e as { data?: { message?: string }, status?: number }
     toast.add({
       title: 'Fehler',
-      description: err.data?.message ?? 'Name konnte nicht geändert werden.',
+      description: err.status === 500
+        ? 'Serverfehler. Bitte erneut versuchen.'
+        : (err.data?.message ?? 'Name konnte nicht geändert werden.'),
       color: 'error',
       icon: 'i-lucide-circle-alert'
     })
@@ -80,9 +82,11 @@ async function addMember() {
     const err = e as { data?: { message?: string }, status?: number }
     toast.add({
       title: 'Fehler',
-      description: err.status === 409
-        ? 'Spieler ist bereits im Team oder das Team ist voll.'
-        : (err.data?.message ?? 'Mitglied konnte nicht hinzugefügt werden.'),
+      description: err.status === 500
+        ? 'Serverfehler. Bitte erneut versuchen.'
+        : err.status === 409
+          ? 'Spieler ist bereits im Team oder das Team ist voll.'
+          : (err.data?.message ?? 'Mitglied konnte nicht hinzugefügt werden.'),
       color: 'error',
       icon: 'i-lucide-circle-alert'
     })
@@ -101,10 +105,12 @@ async function removeMember(userId: number) {
     await refreshMembers()
     toast.add({ title: 'Mitglied entfernt', color: 'success', icon: 'i-lucide-check-circle' })
   } catch (e: unknown) {
-    const err = e as { data?: { message?: string } }
+    const err = e as { data?: { message?: string }, status?: number }
     toast.add({
       title: 'Fehler',
-      description: err.data?.message ?? 'Mitglied konnte nicht entfernt werden.',
+      description: err.status === 500
+        ? 'Serverfehler. Bitte erneut versuchen.'
+        : (err.data?.message ?? 'Mitglied konnte nicht entfernt werden.'),
       color: 'error',
       icon: 'i-lucide-circle-alert'
     })

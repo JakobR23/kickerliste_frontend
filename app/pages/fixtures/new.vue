@@ -74,8 +74,10 @@ async function onSubmit() {
     })
     await navigateTo('/fixtures')
   } catch (e: unknown) {
-    const err = e as { data?: { message?: string } }
-    errorMsg.value = err.data?.message ?? 'Fehler beim Einreichen des Spiels.'
+    const err = e as { data?: { message?: string }, status?: number }
+    errorMsg.value = err.status === 500
+      ? 'Serverfehler. Bitte erneut versuchen.'
+      : (err.data?.message ?? 'Fehler beim Einreichen des Spiels.')
   } finally {
     loading.value = false
   }

@@ -37,6 +37,8 @@ async function onSubmit() {
     const err = e as { data?: { message?: string }, status?: number }
     if (err.status === 422) {
       errorMsg.value = 'Das aktuelle Passwort ist falsch.'
+    } else if (err.status === 500) {
+      errorMsg.value = 'Serverfehler. Bitte erneut versuchen.'
     } else {
       errorMsg.value = err.data?.message ?? 'Passwortänderung fehlgeschlagen.'
     }

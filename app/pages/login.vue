@@ -25,8 +25,10 @@ async function onSubmit() {
       await navigateTo('/')
     }
   } catch (e: unknown) {
-    const err = e as { data?: { message?: string } }
-    errorMsg.value = err.data?.message ?? 'Anmeldung fehlgeschlagen.'
+    const err = e as { data?: { message?: string }, status?: number }
+    errorMsg.value = err.status === 500
+      ? 'Serverfehler. Bitte erneut versuchen.'
+      : (err.data?.message ?? 'Anmeldung fehlgeschlagen.')
   } finally {
     loading.value = false
   }

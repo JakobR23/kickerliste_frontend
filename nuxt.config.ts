@@ -5,14 +5,24 @@ export default defineNuxtConfig({
     '@nuxt/ui'
   ],
 
+  ssr: false,
+
   devtools: {
     enabled: true
   },
 
   css: ['~/assets/css/main.css'],
 
-  routeRules: {
-    '/': { prerender: true }
+  runtimeConfig: {
+    public: {
+      apiBaseUrl: 'http://localhost:8080/api/v1'
+    }
+  },
+
+  experimental: {
+    // Prevents duplicate useAppConfig auto-import warning (nitropack vs @nuxt/nitro-server).
+    // Safe to disable: this app is SPA-only with no Nitro server routes.
+    serverAppConfig: false
   },
 
   compatibilityDate: '2025-01-15',

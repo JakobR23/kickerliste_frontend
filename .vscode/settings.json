@@ -1,0 +1,5 @@
+{
+  "tailwindCSS.files.exclude": [
+    "**/.claude/**"
+  ]
+}

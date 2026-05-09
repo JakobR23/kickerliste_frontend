@@ -8,7 +8,7 @@ const api = useApi()
 
 const { data: fixtures, pending, error, refresh } = useAsyncData<Fixture[]>(
   'fixtures-list',
-  () => api.getFixtures()
+  () => api.getFixtures(undefined, 'approved')
 )
 
 const { data: teams } = useAsyncData<Team[]>('teams-for-fixtures', () => api.getTeams())

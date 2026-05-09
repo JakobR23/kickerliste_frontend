@@ -14,15 +14,6 @@ onMounted(() => {
   if (!auth.isAdmin.value) navigateTo('/')
 })
 
-// Pending fixtures: the current API only returns approved fixtures via GET /fixtures.
-// We store submitted fixture IDs in a local list so admins can look them up.
-// When the backend adds a GET /fixtures?status=pending endpoint, this page can be updated.
-
-const lookupId = ref<number | null>(null)
-const lookedUpFixture = ref<Fixture | null>(null)
-const lookupLoading = ref(false)
-const lookupError = ref('')
-
 const { data: teams } = useAsyncData<Team[]>('teams-admin-fixtures', () => api.getTeams())
 
 const teamMap = computed(() => {
@@ -35,31 +26,24 @@ function teamName(id: number): string {
   return teamMap.value.get(id) ?? `Team #${id}`
 }
 
-async function lookupFixture() {
-  if (!lookupId.value) return
-  lookupLoading.value = true
-  lookupError.value = ''
-  lookedUpFixture.value = null
-  try {
-    const f = await api.getFixture(lookupId.value)
-    lookedUpFixture.value = f
-  } catch (e: unknown) {
-    const err = e as { status?: number, data?: { message?: string } }
-    lookupError.value = err.status === 404
-      ? 'Kein Spiel mit dieser ID gefunden.'
-      : (err.data?.message ?? 'Fehler beim Laden.')
-  } finally {
-    lookupLoading.value = false
-  }
-}
+const { data: pendingFixtures, pending: loading, refresh } = useAsyncData<Fixture[]>(
+  'admin-pending-fixtures',
+  () => api.getFixtures(undefined, 'pending')
+)
 
-const actionLoading = ref<'approve' | 'reject' | null>(null)
+const sorted = computed(() =>
+  [...(pendingFixtures.value ?? [])].sort(
+    (a, b) => new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime()
+  )
+)
+
+const actionLoading = ref<number | null>(null)
 
 async function approve(id: number) {
-  actionLoading.value = 'approve'
+  actionLoading.value = id
   try {
-    const updated = await api.approveFixture(id)
-    lookedUpFixture.value = updated
+    await api.approveFixture(id)
+    await refresh()
     toast.add({ title: 'Spiel genehmigt', color: 'success', icon: 'i-lucide-check-circle' })
   } catch (e: unknown) {
     const err = e as { status?: number, data?: { message?: string } }
@@ -77,10 +61,10 @@ async function approve(id: number) {
 }
 
 async function reject(id: number) {
-  actionLoading.value = 'reject'
+  actionLoading.value = id
   try {
-    const updated = await api.rejectFixture(id)
-    lookedUpFixture.value = updated
+    await api.rejectFixture(id)
+    await refresh()
     toast.add({ title: 'Spiel abgelehnt', color: 'neutral', icon: 'i-lucide-x-circle' })
   } catch (e: unknown) {
     const err = e as { status?: number, data?: { message?: string } }
@@ -107,13 +91,7 @@ function formatDate(iso: string): string {
   })
 }
 
-const statusConfig = {
-  pending: { label: 'Ausstehend', color: 'warning' as const },
-  approved: { label: 'Genehmigt', color: 'success' as const },
-  rejected: { label: 'Abgelehnt', color: 'error' as const }
-}
-
-const resultLabels = {
+const resultLabels: Record<string, string> = {
   team_1: 'Team 1 gewinnt',
   team_2: 'Team 2 gewinnt',
   draw: 'Unentschieden'
@@ -121,172 +99,120 @@ const resultLabels = {
 </script>
 
 <template>
-  <div class="p-4 lg:p-8 max-w-2xl mx-auto">
-    <div class="flex items-center gap-3 mb-6">
-      <UIcon
-        name="i-lucide-clipboard-check"
-        class="w-6 h-6 text-amber-500"
+  <div class="p-4 lg:p-8 max-w-3xl mx-auto">
+    <div class="flex items-center justify-between mb-6">
+      <div class="flex items-center gap-3">
+        <UIcon
+          name="i-lucide-clipboard-check"
+          class="w-6 h-6 text-amber-500"
+        />
+        <h1 class="text-2xl font-bold text-default">
+          Ausstehende Spiele
+        </h1>
+      </div>
+      <UButton
+        icon="i-lucide-refresh-cw"
+        variant="ghost"
+        color="neutral"
+        :loading="loading"
+        @click="() => refresh()"
       />
-      <h1 class="text-2xl font-bold text-default">
-        Spielüberprüfung
-      </h1>
     </div>
 
-    <UAlert
-      color="neutral"
-      variant="soft"
-      icon="i-lucide-info"
-      title="Spiel nachschlagen"
-      description="Gib die ID eines eingereichten Spiels ein, um es zu überprüfen, genehmigen oder abzulehnen."
-      class="mb-6"
-    />
-
-    <!-- Lookup form -->
-    <UCard class="mb-6">
-      <div class="flex gap-3">
-        <UFormField
-          label="Spiel-ID"
-          name="fixtureId"
-          class="flex-1"
-        >
-          <UInput
-            v-model.number="lookupId"
-            type="number"
-            min="1"
-            placeholder="z.B. 42"
-            class="w-full"
-            @keydown.enter="lookupFixture"
-          />
-        </UFormField>
-        <div class="flex items-end">
-          <UButton
-            :loading="lookupLoading"
-            :disabled="!lookupId"
-            icon="i-lucide-search"
-            @click="lookupFixture"
-          >
-            Suchen
-          </UButton>
-        </div>
-      </div>
-      <UAlert
-        v-if="lookupError"
-        color="error"
-        variant="soft"
-        :description="lookupError"
-        icon="i-lucide-circle-alert"
-        class="mt-4"
+    <!-- Loading -->
+    <div
+      v-if="loading"
+      class="space-y-3"
+    >
+      <div
+        v-for="i in 3"
+        :key="i"
+        class="h-24 rounded-xl bg-elevated animate-pulse"
       />
-    </UCard>
+    </div>
 
-    <!-- Found fixture -->
-    <UCard v-if="lookedUpFixture">
-      <template #header>
-        <div class="flex items-center justify-between">
-          <h2 class="font-semibold text-default">
-            Spiel #{{ lookedUpFixture.id }}
-          </h2>
-          <UBadge
-            :label="statusConfig[lookedUpFixture.status].label"
-            :color="statusConfig[lookedUpFixture.status].color"
-            variant="soft"
+    <!-- Pending list -->
+    <div
+      v-else-if="sorted.length"
+      class="space-y-3"
+    >
+      <UCard
+        v-for="f in sorted"
+        :key="f.id"
+      >
+        <div class="flex items-start gap-4">
+          <!-- Date + ID -->
+          <div class="shrink-0 text-center w-16">
+            <p class="text-xs text-dimmed font-medium leading-snug">
+              {{ formatDate(f.playedAt) }}
+            </p>
+            <p class="text-xs text-dimmed mt-1">
+              #{{ f.id }}
+            </p>
+          </div>
+
+          <USeparator
+            orientation="vertical"
+            class="h-12"
           />
-        </div>
-      </template>
 
-      <div class="space-y-3">
-        <div class="grid grid-cols-2 gap-4 text-sm">
-          <div>
-            <p class="text-dimmed text-xs mb-1">
-              Team 1
-            </p>
-            <p class="font-medium text-default">
-              {{ teamName(lookedUpFixture.team1Id) }}
-            </p>
-          </div>
-          <div>
-            <p class="text-dimmed text-xs mb-1">
-              Team 2
-            </p>
-            <p class="font-medium text-default">
-              {{ teamName(lookedUpFixture.team2Id) }}
-            </p>
-          </div>
-          <div>
-            <p class="text-dimmed text-xs mb-1">
-              Ergebnis
-            </p>
-            <p class="font-medium text-default">
-              {{ resultLabels[lookedUpFixture.result] }}
+          <!-- Teams + result -->
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center gap-2 flex-wrap">
+              <span class="font-semibold text-sm text-default truncate">
+                {{ teamName(f.team1Id) }}
+              </span>
+              <span class="text-dimmed text-sm shrink-0">vs</span>
+              <span class="font-semibold text-sm text-default truncate">
+                {{ teamName(f.team2Id) }}
+              </span>
+            </div>
+            <p class="text-xs text-dimmed mt-1">
+              {{ resultLabels[f.result] }} · Wert: {{ f.value }}
+              <span v-if="f.team1Score !== null && f.team2Score !== null">
+                · {{ f.team1Score }}:{{ f.team2Score }}
+              </span>
             </p>
           </div>
-          <div>
-            <p class="text-dimmed text-xs mb-1">
-              Spielwert
-            </p>
-            <p class="font-medium text-default">
-              {{ lookedUpFixture.value }} Punkte
-            </p>
-          </div>
-          <div v-if="lookedUpFixture.team1Score !== null">
-            <p class="text-dimmed text-xs mb-1">
-              Score
-            </p>
-            <p class="font-medium text-default">
-              {{ lookedUpFixture.team1Score }} : {{ lookedUpFixture.team2Score }}
-            </p>
-          </div>
-          <div>
-            <p class="text-dimmed text-xs mb-1">
-              Gespielt am
-            </p>
-            <p class="font-medium text-default">
-              {{ formatDate(lookedUpFixture.playedAt) }}
-            </p>
+
+          <!-- Actions -->
+          <div class="flex items-center gap-2 shrink-0">
+            <UButton
+              color="error"
+              variant="soft"
+              icon="i-lucide-x"
+              size="sm"
+              :loading="actionLoading === f.id"
+              :disabled="actionLoading !== null"
+              @click="reject(f.id)"
+            >
+              Ablehnen
+            </UButton>
+            <UButton
+              color="success"
+              icon="i-lucide-check"
+              size="sm"
+              :loading="actionLoading === f.id"
+              :disabled="actionLoading !== null"
+              @click="approve(f.id)"
+            >
+              Genehmigen
+            </UButton>
           </div>
         </div>
+      </UCard>
+    </div>
 
-        <!-- Actions (only for pending) -->
-        <div
-          v-if="lookedUpFixture.status === 'pending'"
-          class="flex gap-3 pt-4 border-t border-default"
-        >
-          <UButton
-            color="error"
-            variant="soft"
-            icon="i-lucide-x"
-            :loading="actionLoading === 'reject'"
-            :disabled="actionLoading !== null"
-            @click="reject(lookedUpFixture.id)"
-          >
-            Ablehnen
-          </UButton>
-          <UButton
-            color="success"
-            icon="i-lucide-check"
-            :loading="actionLoading === 'approve'"
-            :disabled="actionLoading !== null"
-            @click="approve(lookedUpFixture.id)"
-          >
-            Genehmigen
-          </UButton>
-        </div>
-
-        <UAlert
-          v-else-if="lookedUpFixture.status === 'approved'"
-          color="success"
-          variant="soft"
-          description="Dieses Spiel wurde bereits genehmigt und zählt zur Wertung."
-          icon="i-lucide-check-circle"
-        />
-        <UAlert
-          v-else
-          color="neutral"
-          variant="soft"
-          description="Dieses Spiel wurde abgelehnt."
-          icon="i-lucide-x-circle"
-        />
-      </div>
-    </UCard>
+    <!-- Empty -->
+    <div
+      v-else
+      class="text-center py-16 text-muted"
+    >
+      <UIcon
+        name="i-lucide-clipboard-check"
+        class="w-10 h-10 mx-auto mb-3 opacity-40"
+      />
+      <p>Keine ausstehenden Spiele.</p>
+    </div>
   </div>
 </template>

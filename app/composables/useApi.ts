@@ -66,8 +66,13 @@ export function useApi() {
       client(`/teams/${teamId}/members/${userId}`, { method: 'DELETE' }),
 
     // Fixtures
-    getFixtures: (teamId?: number) =>
-      client<Fixture[]>('/fixtures', { query: teamId ? { teamId } : undefined }),
+    getFixtures: (teamId?: number, status?: Fixture['status']) =>
+      client<Fixture[]>('/fixtures', {
+        query: {
+          ...(teamId && { teamId }),
+          ...(status && { status }),
+        },
+      }),
     getFixture: (id: number) =>
       client<Fixture>(`/fixtures/${id}`),
     createFixture: (body: CreateFixtureRequest) =>

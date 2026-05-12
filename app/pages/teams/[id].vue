@@ -1,13 +1,17 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRoute, useAsyncData, useToast } from '#imports'
+import { useAuthStore } from '~/composables/useAuthStore'
 import { useApi } from '~/composables/useApi'
 import type { Team, User } from '~/types/api'
 import { formatScore } from '~/utils/format'
 
 const route = useRoute()
+const auth = useAuthStore()
 const api = useApi()
 const toast = useToast()
+
+const canDelete = computed(() => auth.isAdmin.value)
 
 const teamId = computed(() => Number(route.params.id))
 
@@ -189,6 +193,7 @@ async function removeMember(userId: number) {
             </p>
           </div>
           <UButton
+            v-if="canDelete"
             icon="i-lucide-x"
             variant="ghost"
             color="neutral"

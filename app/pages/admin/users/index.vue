@@ -145,6 +145,7 @@ watch(adjOpen, (isOpen) => {
     adjLoading.value = false
     adjHistoryLoading.value = false
     adjError.value = ''
+    adjHistory.value = []
   }
 })
 
@@ -155,7 +156,7 @@ async function openAdjustment(user: User) {
   adjOpen.value = true
   adjHistoryLoading.value = true
   try {
-    adjHistory.value = await api.getAdjustments(user.id)
+    adjHistory.value = (await api.getAdjustments(user.id)) ?? []
   } catch {
     adjHistory.value = []
   } finally {
@@ -181,8 +182,7 @@ async function saveAdjustment() {
       reason: adjState.reason.trim()
     })
     await refreshUsers()
-    const adj = await api.getAdjustments(adjTarget.value.id)
-    adjHistory.value = adj
+    adjHistory.value = (await api.getAdjustments(adjTarget.value.id)) ?? []
     Object.assign(adjState, { amount: 0, reason: '' })
     adjOpen.value = false
     toast.add({ title: 'Punktekorrektur gespeichert', color: 'success', icon: 'i-lucide-check-circle' })
@@ -471,7 +471,7 @@ async function saveAdjustment() {
 
           <!-- History -->
           <div
-            v-if="adjHistory.length"
+            v-if="adjHistory?.length"
             class="pt-2"
           >
             <p class="text-xs font-semibold uppercase tracking-wider text-dimmed mb-2">

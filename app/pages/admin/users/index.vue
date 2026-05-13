@@ -374,66 +374,66 @@ async function saveAdjustment() {
           variant="ghost"
           color="neutral"
           :loading="pendingStatus === 'pending'"
-          @click="refreshPending"
+          @click="() => refreshPending()"
         >
           Aktualisieren
         </UButton>
       </div>
       <div class="space-y-2">
-      <div
-        v-for="user in pendingUsers"
-        :key="user.id"
-        class="flex items-center gap-4 px-4 py-3 rounded-xl border border-default bg-elevated hover:bg-accented transition-colors"
-      >
-        <UAvatar
-          :alt="user.username"
-          size="sm"
-          class="ring-1 ring-default shrink-0"
-        />
-
-        <div class="flex-1 min-w-0">
-          <p class="font-semibold text-default truncate">
-            {{ user.username }}
-          </p>
-          <p class="text-xs text-dimmed">
-            ID {{ user.id }}
-          </p>
-        </div>
-
-        <!-- Actions -->
-        <div class="flex items-center gap-2 shrink-0">
-          <UButton
-            size="xs"
-            color="success"
-            variant="soft"
-            icon="i-lucide-user-check"
-            :loading="activatingId === user.id"
-            @click="activateUser(user)"
-          >
-            Aktivieren
-          </UButton>
-          <UButton
-            icon="i-lucide-trash-2"
-            variant="ghost"
-            color="error"
-            size="xs"
-            title="Löschen"
-            @click="openDelete(user)"
+        <div
+          v-for="user in pendingUsers"
+          :key="user.id"
+          class="flex items-center gap-4 px-4 py-3 rounded-xl border border-default bg-elevated hover:bg-accented transition-colors"
+        >
+          <UAvatar
+            :alt="user.username"
+            size="sm"
+            class="ring-1 ring-default shrink-0"
           />
+
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-default truncate">
+              {{ user.username }}
+            </p>
+            <p class="text-xs text-dimmed">
+              ID {{ user.id }}
+            </p>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center gap-2 shrink-0">
+            <UButton
+              size="xs"
+              color="success"
+              variant="soft"
+              icon="i-lucide-user-check"
+              :loading="activatingId === user.id"
+              @click="activateUser(user)"
+            >
+              Aktivieren
+            </UButton>
+            <UButton
+              icon="i-lucide-trash-2"
+              variant="ghost"
+              color="error"
+              size="xs"
+              title="Löschen"
+              @click="openDelete(user)"
+            />
+          </div>
+        </div>
+
+        <div
+          v-if="!pendingUsers?.length"
+          class="text-center py-12 text-muted"
+        >
+          <UIcon
+            name="i-lucide-user-check"
+            class="w-10 h-10 mx-auto mb-3 opacity-40"
+          />
+          <p>Keine ausstehenden Konten.</p>
         </div>
       </div>
-
-      <div
-        v-if="!pendingUsers?.length"
-        class="text-center py-12 text-muted"
-      >
-        <UIcon
-          name="i-lucide-user-check"
-          class="w-10 h-10 mx-auto mb-3 opacity-40"
-        />
-        <p>Keine ausstehenden Konten.</p>
-      </div>
-    </div>
     </div>
 
     <!-- Create user modal -->

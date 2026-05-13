@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useColorMode, useRoute, navigateTo } from '#imports'
 import { useAuthStore } from '~/composables/useAuthStore'
 import { usePendingUsers } from '~/composables/usePendingUsers'
@@ -18,10 +18,10 @@ const navItems = [
   { icon: 'i-lucide-users', label: 'Teams', to: '/teams' }
 ]
 
-const adminNavItems = computed(() => [
-  { icon: 'i-lucide-clipboard-check', label: 'Ausstehende Spiele', to: '/admin/fixtures', badge: 0 },
-  { icon: 'i-lucide-user-cog', label: 'Benutzerverwaltung', to: '/admin/users', badge: pendingCount.value }
-])
+const adminNavItems = [
+  { icon: 'i-lucide-clipboard-check', label: 'Ausstehende Spiele', to: '/admin/fixtures' },
+  { icon: 'i-lucide-user-cog', label: 'Benutzerverwaltung', to: '/admin/users' }
+]
 
 onMounted(async () => {
   if (auth.isAdmin.value) {
@@ -149,8 +149,8 @@ watch(route, () => {
               />
               <span :class="['truncate', sidebarCollapsed ? 'lg:hidden' : '']">{{ item.label }}</span>
               <UBadge
-                v-if="item.badge > 0 && !sidebarCollapsed"
-                :label="String(item.badge)"
+                v-if="item.to === '/admin/users' && pendingCount > 0 && !sidebarCollapsed"
+                :label="String(pendingCount)"
                 color="warning"
                 variant="solid"
                 size="xs"

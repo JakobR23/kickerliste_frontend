@@ -27,9 +27,9 @@ useSeoMeta({ title: 'Impressum – Kickerliste' })
           Angaben gemäß § 5 DDG
         </p>
         <p>
-          <strong>[Firmenname / Betreiber]</strong><br>
-          [Straße Hausnummer]<br>
-          [PLZ Ort]<br>
+          <strong>Jakob Rottstegge</strong><br>
+          Lippestraße 2<br>
+          46395 Bocholt<br>
           Deutschland
         </p>
       </section>
@@ -40,7 +40,7 @@ useSeoMeta({ title: 'Impressum – Kickerliste' })
         <p class="font-semibold text-default mb-1">
           Vertreten durch
         </p>
-        <p>[Vor- und Nachname des Verantwortlichen]</p>
+        <p>Jakob Rottstegge</p>
       </section>
 
       <USeparator />
@@ -53,8 +53,8 @@ useSeoMeta({ title: 'Impressum – Kickerliste' })
           E-Mail: <a
             href="mailto:[email@example.com]"
             class="text-amber-500 hover:underline"
-          >[email@example.com]</a><br>
-          Telefon: [+49 xxx xxxxxxx]
+          >jakob.rottstegge@gmail.com</a><br>
+          Telefon: +49 1575 2064534
         </p>
       </section>
 
@@ -65,9 +65,9 @@ useSeoMeta({ title: 'Impressum – Kickerliste' })
           Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV
         </p>
         <p>
-          [Vor- und Nachname]<br>
-          [Straße Hausnummer]<br>
-          [PLZ Ort]
+          Jakob Rottstegge<br>
+          Lippestraße 2<br>
+          46395 Bocholt<br>
         </p>
       </section>
 

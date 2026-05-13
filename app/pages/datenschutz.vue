@@ -31,13 +31,13 @@ useSeoMeta({ title: 'Datenschutzerklärung – Kickerliste' })
           Verantwortlicher im Sinne der Datenschutz-Grundverordnung (DSGVO) ist:
         </p>
         <p class="mt-2">
-          [Firmenname / Betreiber]<br>
-          [Straße Hausnummer]<br>
-          [PLZ Ort]<br>
+          Jakob Rottstegge<br>
+          Lippestraße 2<br>
+          46395 Bocholt<br>
           E-Mail: <a
-            href="mailto:[email@example.com]"
+            href="mailto:jakob.rottstegge@gmail.com"
             class="text-amber-500 hover:underline"
-          >[email@example.com]</a>
+          >jakob.rottstegge@gmail.com</a>
         </p>
       </section>
 

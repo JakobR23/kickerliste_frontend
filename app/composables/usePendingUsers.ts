@@ -1,8 +1,11 @@
+import { ref } from 'vue'
 import { useApi } from '~/composables/useApi'
 
+// Module-level singleton — one ref shared by every caller.
+// Safe for SPA (ssr: false): no per-request isolation needed.
+const pendingCount = ref(0)
+
 export function usePendingUsers() {
-  // useState keeps the same ref across all component instances
-  const pendingCount = useState<number>('pending-users-count', () => 0)
   const api = useApi()
 
   async function refreshPendingCount() {

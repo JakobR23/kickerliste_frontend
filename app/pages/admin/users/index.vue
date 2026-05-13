@@ -3,12 +3,14 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useAsyncData, useToast, navigateTo } from '#imports'
 import { useAuthStore } from '~/composables/useAuthStore'
 import { useApi } from '~/composables/useApi'
+import { usePendingUsers } from '~/composables/usePendingUsers'
 import type { User, ScoreAdjustment } from '~/types/api'
 import { formatDate, formatScore } from '~/utils/format'
 
 const auth = useAuthStore()
 const api = useApi()
 const toast = useToast()
+const { refreshPendingCount } = usePendingUsers()
 
 // Guard: admin only
 onMounted(() => {
@@ -42,6 +44,7 @@ async function activateUser(user: User) {
   try {
     await api.activateUser(user.id)
     await Promise.all([refreshUsers(), refreshPending()])
+    await refreshPendingCount()
     toast.add({ title: `${user.username} aktiviert`, color: 'success', icon: 'i-lucide-check-circle' })
   } catch (e: unknown) {
     const err = e as { data?: { message?: string }, status?: number }
@@ -147,6 +150,7 @@ async function confirmDelete() {
   try {
     await api.deleteUser(deleteTarget.value.id)
     await Promise.all([refreshUsers(), refreshPending()])
+    await refreshPendingCount()
     deleteOpen.value = false
     toast.add({ title: 'Benutzer gelöscht', color: 'success', icon: 'i-lucide-check-circle' })
   } catch (e: unknown) {

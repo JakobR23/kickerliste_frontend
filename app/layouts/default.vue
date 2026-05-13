@@ -2,10 +2,10 @@
 import { ref, computed, watch, onMounted } from 'vue'
 import { useColorMode, useRoute, navigateTo } from '#imports'
 import { useAuthStore } from '~/composables/useAuthStore'
-import { useApi } from '~/composables/useApi'
+import { usePendingUsers } from '~/composables/usePendingUsers'
 
 const auth = useAuthStore()
-const api = useApi()
+const { pendingCount, refreshPendingCount } = usePendingUsers()
 const colorMode = useColorMode()
 const route = useRoute()
 
@@ -18,8 +18,6 @@ const navItems = [
   { icon: 'i-lucide-users', label: 'Teams', to: '/teams' }
 ]
 
-const pendingCount = ref(0)
-
 const adminNavItems = computed(() => [
   { icon: 'i-lucide-clipboard-check', label: 'Ausstehende Spiele', to: '/admin/fixtures', badge: 0 },
   { icon: 'i-lucide-user-cog', label: 'Benutzerverwaltung', to: '/admin/users', badge: pendingCount.value }
@@ -27,12 +25,7 @@ const adminNavItems = computed(() => [
 
 onMounted(async () => {
   if (auth.isAdmin.value) {
-    try {
-      const pending = await api.getUsers(false)
-      pendingCount.value = pending.length
-    } catch {
-      // non-critical — badge simply won't show
-    }
+    await refreshPendingCount()
   }
 })
 

@@ -31,5 +31,7 @@ const colorMode = useColorMode()
     <p class="mt-8 text-xs text-dimmed">
       Büro-Kicker Ergebnisverfolgung
     </p>
+
+    <AppFooter class="mt-4" />
   </div>
 </template>

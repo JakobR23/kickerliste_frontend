@@ -254,7 +254,12 @@ watch(route, () => {
 
       <!-- Page content -->
       <main class="flex-1 overflow-y-auto">
-        <slot />
+        <div class="flex flex-col min-h-full">
+          <div class="flex-1">
+            <slot />
+          </div>
+          <AppFooter />
+        </div>
       </main>
     </div>
   </div>

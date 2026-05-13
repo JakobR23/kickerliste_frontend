@@ -1,17 +1,20 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
-import { navigateTo } from '#imports'
+import { reactive, ref, computed } from 'vue'
+import { navigateTo, useRoute } from '#imports'
 import { useAuthStore } from '~/composables/useAuthStore'
 import { useApi } from '~/composables/useApi'
 
 definePageMeta({ layout: 'auth' })
 
+const route = useRoute()
 const auth = useAuthStore()
 const api = useApi()
 
 const state = reactive({ username: '', password: '' })
 const errorMsg = ref('')
 const loading = ref(false)
+
+const pendingActivation = computed(() => route.query.pending === 'true')
 
 async function onSubmit() {
   loading.value = true
@@ -46,6 +49,16 @@ async function onSubmit() {
         Anmelden
       </h1>
     </template>
+
+    <UAlert
+      v-if="pendingActivation"
+      color="info"
+      variant="soft"
+      icon="i-lucide-clock"
+      title="Konto wird aktiviert"
+      description="Deine Registrierung war erfolgreich. Ein Administrator muss dein Konto noch freischalten, bevor du dich anmelden kannst."
+      class="mb-4"
+    />
 
     <form
       class="space-y-4"

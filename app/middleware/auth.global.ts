@@ -5,7 +5,7 @@ export default defineNuxtRouteMiddleware((to) => {
   if (import.meta.server) return
 
   const auth = useAuthStore()
-  const publicRoutes = ['/login', '/register', '/impressum', '/datenschutz', '/register/pending']
+  const publicRoutes = ['/login', '/register', '/impressum', '/datenschutz']
 
   if (to.path === '/login' || to.path === '/register') {
     auth.clear()

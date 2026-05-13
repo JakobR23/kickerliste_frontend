@@ -24,7 +24,7 @@ async function onSubmit() {
   errorMsg.value = ''
   try {
     await api.register({ username: state.username, password: state.password })
-    await navigateTo('/register/pending')
+    await navigateTo('/login?pending=true')
   } catch (e: unknown) {
     const err = e as { data?: { message?: string }, status?: number }
     if (err.status === 409) {

@@ -35,12 +35,13 @@ export function useApi() {
     login: (body: LoginRequest) =>
       client<{ token: string }>('/auth/login', { method: 'POST', body }),
     register: (body: RegisterRequest) =>
-      client<{ token: string }>('/auth/register', { method: 'POST', body }),
+      client<{ message: string }>('/auth/register', { method: 'POST', body }),
     changePassword: (body: ChangePasswordRequest) =>
       client<{ token: string }>('/auth/change-password', { method: 'POST', body }),
 
     // Users
-    getUsers: () => client<User[]>('/users'),
+    getUsers: (active?: boolean) =>
+      client<User[]>('/users', { query: active === false ? { active: 'false' } : {} }),
     getUser: (id: number) => client<User>(`/users/${id}`),
     createUser: (body: CreateUserRequest) =>
       client<User>('/users', { method: 'POST', body }),
@@ -48,6 +49,8 @@ export function useApi() {
       client<User>(`/users/${id}`, { method: 'PUT', body }),
     deleteUser: (id: number) =>
       client(`/users/${id}`, { method: 'DELETE' }),
+    activateUser: (id: number) =>
+      client(`/users/${id}/activate`, { method: 'PATCH' }),
 
     // Teams
     getTeams: () => client<Team[]>('/teams'),

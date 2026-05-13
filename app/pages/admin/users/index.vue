@@ -3,26 +3,63 @@ import { ref, reactive, computed, onMounted, watch } from 'vue'
 import { useAsyncData, useToast, navigateTo } from '#imports'
 import { useAuthStore } from '~/composables/useAuthStore'
 import { useApi } from '~/composables/useApi'
+import { usePendingUsers } from '~/composables/usePendingUsers'
 import type { User, ScoreAdjustment } from '~/types/api'
 import { formatDate, formatScore } from '~/utils/format'
 
 const auth = useAuthStore()
 const api = useApi()
 const toast = useToast()
+const { refreshPendingCount } = usePendingUsers()
 
 // Guard: admin only
 onMounted(() => {
   if (!auth.isAdmin.value) navigateTo('/')
 })
 
+// --- Tabs ---
+const activeTab = ref<'active' | 'pending'>('active')
+
 const { data: users, refresh: refreshUsers } = useAsyncData<User[]>(
   'admin-users',
   () => api.getUsers()
 )
 
+const { data: pendingUsers, refresh: refreshPending, status: pendingStatus } = useAsyncData<User[]>(
+  'admin-users-pending',
+  () => api.getUsers(false)
+)
+
 const sorted = computed(() =>
   [...(users.value ?? [])].sort((a, b) => b.totalScore - a.totalScore)
 )
+
+const pendingCount = computed(() => pendingUsers.value?.length ?? 0)
+
+// --- Activate user ---
+const activatingId = ref<number | null>(null)
+
+async function activateUser(user: User) {
+  activatingId.value = user.id
+  try {
+    await api.activateUser(user.id)
+    await Promise.all([refreshUsers(), refreshPending()])
+    await refreshPendingCount()
+    toast.add({ title: `${user.username} aktiviert`, color: 'success', icon: 'i-lucide-check-circle' })
+  } catch (e: unknown) {
+    const err = e as { data?: { message?: string }, status?: number }
+    toast.add({
+      title: 'Fehler',
+      description: err.status === 500
+        ? 'Serverfehler. Bitte erneut versuchen.'
+        : (err.data?.message ?? 'Aktivierung fehlgeschlagen.'),
+      color: 'error',
+      icon: 'i-lucide-circle-alert'
+    })
+  } finally {
+    activatingId.value = null
+  }
+}
 
 // --- Create user ---
 const createOpen = ref(false)
@@ -112,7 +149,8 @@ async function confirmDelete() {
   deleteLoading.value = true
   try {
     await api.deleteUser(deleteTarget.value.id)
-    await refreshUsers()
+    await Promise.all([refreshUsers(), refreshPending()])
+    await refreshPendingCount()
     deleteOpen.value = false
     toast.add({ title: 'Benutzer gelöscht', color: 'success', icon: 'i-lucide-check-circle' })
   } catch (e: unknown) {
@@ -218,8 +256,40 @@ async function saveAdjustment() {
       </UButton>
     </div>
 
-    <!-- User list -->
-    <div class="space-y-2">
+    <!-- Tab toggle -->
+    <div class="flex gap-1 p-1 bg-elevated rounded-lg border border-default mb-4">
+      <button
+        :class="[
+          'flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors',
+          activeTab === 'active' ? 'bg-default text-default shadow-sm' : 'text-muted hover:text-default'
+        ]"
+        @click="activeTab = 'active'"
+      >
+        Aktive Benutzer
+      </button>
+      <button
+        :class="[
+          'flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors',
+          activeTab === 'pending' ? 'bg-default text-default shadow-sm' : 'text-muted hover:text-default'
+        ]"
+        @click="activeTab = 'pending'"
+      >
+        Ausstehend
+        <UBadge
+          v-if="pendingCount > 0"
+          :label="String(pendingCount)"
+          color="warning"
+          variant="solid"
+          size="xs"
+        />
+      </button>
+    </div>
+
+    <!-- Active user list -->
+    <div
+      v-if="activeTab === 'active'"
+      class="space-y-2"
+    >
       <div
         v-for="user in sorted"
         :key="user.id"
@@ -292,6 +362,77 @@ async function saveAdjustment() {
           class="w-10 h-10 mx-auto mb-3 opacity-40"
         />
         <p>Keine Benutzer vorhanden.</p>
+      </div>
+    </div>
+
+    <!-- Pending activation list -->
+    <div v-else>
+      <div class="flex justify-end mb-3">
+        <UButton
+          icon="i-lucide-refresh-cw"
+          size="xs"
+          variant="ghost"
+          color="neutral"
+          :loading="pendingStatus === 'pending'"
+          @click="() => refreshPending()"
+        >
+          Aktualisieren
+        </UButton>
+      </div>
+      <div class="space-y-2">
+        <div
+          v-for="user in pendingUsers"
+          :key="user.id"
+          class="flex items-center gap-4 px-4 py-3 rounded-xl border border-default bg-elevated hover:bg-accented transition-colors"
+        >
+          <UAvatar
+            :alt="user.username"
+            size="sm"
+            class="ring-1 ring-default shrink-0"
+          />
+
+          <div class="flex-1 min-w-0">
+            <p class="font-semibold text-default truncate">
+              {{ user.username }}
+            </p>
+            <p class="text-xs text-dimmed">
+              ID {{ user.id }}
+            </p>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex items-center gap-2 shrink-0">
+            <UButton
+              size="xs"
+              color="success"
+              variant="soft"
+              icon="i-lucide-user-check"
+              :loading="activatingId === user.id"
+              @click="activateUser(user)"
+            >
+              Aktivieren
+            </UButton>
+            <UButton
+              icon="i-lucide-trash-2"
+              variant="ghost"
+              color="error"
+              size="xs"
+              title="Löschen"
+              @click="openDelete(user)"
+            />
+          </div>
+        </div>
+
+        <div
+          v-if="!pendingUsers?.length"
+          class="text-center py-12 text-muted"
+        >
+          <UIcon
+            name="i-lucide-user-check"
+            class="w-10 h-10 mx-auto mb-3 opacity-40"
+          />
+          <p>Keine ausstehenden Konten.</p>
+        </div>
       </div>
     </div>
 

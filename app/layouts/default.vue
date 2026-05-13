@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useColorMode, useRoute, navigateTo } from '#imports'
 import { useAuthStore } from '~/composables/useAuthStore'
+import { usePendingUsers } from '~/composables/usePendingUsers'
 
 const auth = useAuthStore()
+const { pendingCount, refreshPendingCount } = usePendingUsers()
 const colorMode = useColorMode()
 const route = useRoute()
 
@@ -20,6 +22,12 @@ const adminNavItems = [
   { icon: 'i-lucide-clipboard-check', label: 'Ausstehende Spiele', to: '/admin/fixtures' },
   { icon: 'i-lucide-user-cog', label: 'Benutzerverwaltung', to: '/admin/users' }
 ]
+
+onMounted(async () => {
+  if (auth.isAdmin.value) {
+    await refreshPendingCount()
+  }
+})
 
 function isActive(path: string) {
   if (path === '/') return route.path === '/'
@@ -140,6 +148,14 @@ watch(route, () => {
                 class="w-5 h-5 shrink-0"
               />
               <span :class="['truncate', sidebarCollapsed ? 'lg:hidden' : '']">{{ item.label }}</span>
+              <UBadge
+                v-if="item.to === '/admin/users' && pendingCount > 0 && !sidebarCollapsed"
+                :label="String(pendingCount)"
+                color="warning"
+                variant="solid"
+                size="xs"
+                class="ml-auto shrink-0"
+              />
             </NuxtLink>
           </template>
         </template>

@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useColorMode, useRoute, navigateTo } from '#imports'
 import { useAuthStore } from '~/composables/useAuthStore'
+import { useApi } from '~/composables/useApi'
 
 const auth = useAuthStore()
+const api = useApi()
 const colorMode = useColorMode()
 const route = useRoute()
 
@@ -16,10 +18,23 @@ const navItems = [
   { icon: 'i-lucide-users', label: 'Teams', to: '/teams' }
 ]
 
-const adminNavItems = [
-  { icon: 'i-lucide-clipboard-check', label: 'Ausstehende Spiele', to: '/admin/fixtures' },
-  { icon: 'i-lucide-user-cog', label: 'Benutzerverwaltung', to: '/admin/users' }
-]
+const pendingCount = ref(0)
+
+const adminNavItems = computed(() => [
+  { icon: 'i-lucide-clipboard-check', label: 'Ausstehende Spiele', to: '/admin/fixtures', badge: 0 },
+  { icon: 'i-lucide-user-cog', label: 'Benutzerverwaltung', to: '/admin/users', badge: pendingCount.value }
+])
+
+onMounted(async () => {
+  if (auth.isAdmin.value) {
+    try {
+      const pending = await api.getUsers(false)
+      pendingCount.value = pending.length
+    } catch {
+      // non-critical — badge simply won't show
+    }
+  }
+})
 
 function isActive(path: string) {
   if (path === '/') return route.path === '/'
@@ -140,6 +155,14 @@ watch(route, () => {
                 class="w-5 h-5 shrink-0"
               />
               <span :class="['truncate', sidebarCollapsed ? 'lg:hidden' : '']">{{ item.label }}</span>
+              <UBadge
+                v-if="item.badge > 0 && !sidebarCollapsed"
+                :label="String(item.badge)"
+                color="warning"
+                variant="solid"
+                size="xs"
+                class="ml-auto shrink-0"
+              />
             </NuxtLink>
           </template>
         </template>

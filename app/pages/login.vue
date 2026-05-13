@@ -26,9 +26,13 @@ async function onSubmit() {
     }
   } catch (e: unknown) {
     const err = e as { data?: { message?: string }, status?: number }
-    errorMsg.value = err.status === 500
-      ? 'Serverfehler. Bitte erneut versuchen.'
-      : (err.data?.message ?? 'Anmeldung fehlgeschlagen.')
+    if (err.status === 403) {
+      errorMsg.value = 'Dein Konto wurde noch nicht aktiviert. Bitte warte auf die Freigabe durch einen Administrator.'
+    } else if (err.status === 500) {
+      errorMsg.value = 'Serverfehler. Bitte erneut versuchen.'
+    } else {
+      errorMsg.value = err.data?.message ?? 'Anmeldung fehlgeschlagen.'
+    }
   } finally {
     loading.value = false
   }

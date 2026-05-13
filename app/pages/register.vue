@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue'
 import { navigateTo } from '#imports'
-import { useAuthStore } from '~/composables/useAuthStore'
 import { useApi } from '~/composables/useApi'
 
 definePageMeta({ layout: 'auth' })
 
-const auth = useAuthStore()
 const api = useApi()
 
 const state = reactive({ username: '', password: '', passwordConfirm: '' })
@@ -25,9 +23,8 @@ async function onSubmit() {
   loading.value = true
   errorMsg.value = ''
   try {
-    const res = await api.register({ username: state.username, password: state.password })
-    auth.setToken(res.token)
-    await navigateTo('/')
+    await api.register({ username: state.username, password: state.password })
+    await navigateTo('/register/pending')
   } catch (e: unknown) {
     const err = e as { data?: { message?: string }, status?: number }
     if (err.status === 409) {

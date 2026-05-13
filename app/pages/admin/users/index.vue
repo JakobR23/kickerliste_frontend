@@ -25,7 +25,7 @@ const { data: users, refresh: refreshUsers } = useAsyncData<User[]>(
   () => api.getUsers()
 )
 
-const { data: pendingUsers, refresh: refreshPending } = useAsyncData<User[]>(
+const { data: pendingUsers, refresh: refreshPending, status: pendingStatus } = useAsyncData<User[]>(
   'admin-users-pending',
   () => api.getUsers(false)
 )
@@ -366,10 +366,20 @@ async function saveAdjustment() {
     </div>
 
     <!-- Pending activation list -->
-    <div
-      v-else
-      class="space-y-2"
-    >
+    <div v-else>
+      <div class="flex justify-end mb-3">
+        <UButton
+          icon="i-lucide-refresh-cw"
+          size="xs"
+          variant="ghost"
+          color="neutral"
+          :loading="pendingStatus === 'pending'"
+          @click="refreshPending"
+        >
+          Aktualisieren
+        </UButton>
+      </div>
+      <div class="space-y-2">
       <div
         v-for="user in pendingUsers"
         :key="user.id"
@@ -423,6 +433,7 @@ async function saveAdjustment() {
         />
         <p>Keine ausstehenden Konten.</p>
       </div>
+    </div>
     </div>
 
     <!-- Create user modal -->

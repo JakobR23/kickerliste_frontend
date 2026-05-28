@@ -15,7 +15,8 @@ const sidebarCollapsed = ref(false)
 const navItems = [
   { icon: 'i-lucide-trophy', label: 'Rangliste', to: '/' },
   { icon: 'i-lucide-calendar-days', label: 'Spielpläne', to: '/fixtures' },
-  { icon: 'i-lucide-users', label: 'Teams', to: '/teams' }
+  { icon: 'i-lucide-users', label: 'Teams', to: '/teams' },
+  { icon: 'i-lucide-bar-chart-2', label: 'Statistik', to: '/statistics' }
 ]
 
 const adminNavItems = [

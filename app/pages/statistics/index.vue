@@ -10,6 +10,10 @@ interface H2HResult {
   winsB: number
   draws: number
   played: number
+  goalsA: number
+  goalsB: number
+  pointsA: number
+  pointsB: number
   fixtures: Fixture[]
 }
 
@@ -91,39 +95,50 @@ const teamFixturesExpanded = ref(false)
 const playerFixturesExpanded = ref(false)
 
 // --- H2H logic ---
+function calcExtras(relevant: Fixture[], aIsTeam1Fn: (f: Fixture) => boolean) {
+  let winsA = 0, winsB = 0, draws = 0, goalsA = 0, goalsB = 0, pointsA = 0, pointsB = 0
+  for (const f of relevant) {
+    const aIsTeam1 = aIsTeam1Fn(f)
+    // goals
+    if (f.team1Score !== null && f.team2Score !== null) {
+      goalsA += aIsTeam1 ? f.team1Score : f.team2Score
+      goalsB += aIsTeam1 ? f.team2Score : f.team1Score
+    }
+    // wins & points
+    if (f.result === 'draw') {
+      draws++
+    } else if ((f.result === 'team_1') === aIsTeam1) {
+      winsA++
+      pointsA += f.value
+    } else {
+      winsB++
+      pointsB += f.value
+    }
+  }
+  return { winsA, winsB, draws, goalsA, goalsB, pointsA, pointsB }
+}
+
 function teamHeadToHead(idA: number, idB: number): H2HResult {
   const allFixtures = data.value?.fixtures ?? []
   const relevant = allFixtures.filter(f =>
-    (f.team1Id === idA && f.team2Id === idB) ||
-    (f.team1Id === idB && f.team2Id === idA)
+    (f.team1Id === idA && f.team2Id === idB)
+    || (f.team1Id === idB && f.team2Id === idA)
   )
-  let winsA = 0, winsB = 0, draws = 0
-  for (const f of relevant) {
-    const aIsTeam1 = f.team1Id === idA
-    if (f.result === 'draw') draws++
-    else if ((f.result === 'team_1') === aIsTeam1) winsA++
-    else winsB++
-  }
-  return { winsA, winsB, draws, played: relevant.length, fixtures: relevant }
+  const extras = calcExtras(relevant, f => f.team1Id === idA)
+  return { ...extras, played: relevant.length, fixtures: relevant }
 }
 
 function playerHeadToHead(idA: number, idB: number): H2HResult {
   const allFixtures = data.value?.fixtures ?? []
   const teamsA = new Set(teamsByPlayer.value.get(idA) ?? [])
   const teamsB = new Set(teamsByPlayer.value.get(idB) ?? [])
-  const relevant = allFixtures.filter(f => {
+  const relevant = allFixtures.filter((f) => {
     const aOnTeam1 = teamsA.has(f.team1Id) && teamsB.has(f.team2Id)
     const aOnTeam2 = teamsA.has(f.team2Id) && teamsB.has(f.team1Id)
     return aOnTeam1 || aOnTeam2
   })
-  let winsA = 0, winsB = 0, draws = 0
-  for (const f of relevant) {
-    const aIsTeam1 = teamsA.has(f.team1Id)
-    if (f.result === 'draw') draws++
-    else if ((f.result === 'team_1') === aIsTeam1) winsA++
-    else winsB++
-  }
-  return { winsA, winsB, draws, played: relevant.length, fixtures: relevant }
+  const extras = calcExtras(relevant, f => teamsA.has(f.team1Id))
+  return { ...extras, played: relevant.length, fixtures: relevant }
 }
 
 // --- Computed results ---
@@ -324,6 +339,38 @@ const playerFixturesSorted = computed(() =>
               />
             </div>
 
+            <!-- Goals & Points -->
+            <div class="mt-4 grid grid-cols-2 gap-3">
+              <div class="rounded-lg bg-elevated px-4 py-3 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 text-sm text-dimmed">
+                  <UIcon
+                    name="i-lucide-goal"
+                    class="w-4 h-4"
+                  />
+                  Tore
+                </div>
+                <div class="tabular-nums text-sm font-semibold text-default">
+                  {{ teamResult.goalsA }}
+                  <span class="text-dimmed font-normal mx-1">:</span>
+                  {{ teamResult.goalsB }}
+                </div>
+              </div>
+              <div class="rounded-lg bg-elevated px-4 py-3 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 text-sm text-dimmed">
+                  <UIcon
+                    name="i-lucide-coins"
+                    class="w-4 h-4"
+                  />
+                  Punkte
+                </div>
+                <div class="tabular-nums text-sm font-semibold text-default">
+                  {{ teamResult.pointsA }}
+                  <span class="text-dimmed font-normal mx-1">:</span>
+                  {{ teamResult.pointsB }}
+                </div>
+              </div>
+            </div>
+
             <!-- Fixture list toggle -->
             <template #footer>
               <button
@@ -503,6 +550,38 @@ const playerFixturesSorted = computed(() =>
                 class="h-full bg-amber-500 rounded-full transition-all"
                 :style="{ width: `${(playerResult.winsA / (playerResult.winsA + playerResult.winsB)) * 100}%` }"
               />
+            </div>
+
+            <!-- Goals & Points -->
+            <div class="mt-4 grid grid-cols-2 gap-3">
+              <div class="rounded-lg bg-elevated px-4 py-3 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 text-sm text-dimmed">
+                  <UIcon
+                    name="i-lucide-goal"
+                    class="w-4 h-4"
+                  />
+                  Tore
+                </div>
+                <div class="tabular-nums text-sm font-semibold text-default">
+                  {{ playerResult.goalsA }}
+                  <span class="text-dimmed font-normal mx-1">:</span>
+                  {{ playerResult.goalsB }}
+                </div>
+              </div>
+              <div class="rounded-lg bg-elevated px-4 py-3 flex items-center justify-between gap-2">
+                <div class="flex items-center gap-2 text-sm text-dimmed">
+                  <UIcon
+                    name="i-lucide-coins"
+                    class="w-4 h-4"
+                  />
+                  Punkte
+                </div>
+                <div class="tabular-nums text-sm font-semibold text-default">
+                  {{ playerResult.pointsA }}
+                  <span class="text-dimmed font-normal mx-1">:</span>
+                  {{ playerResult.pointsB }}
+                </div>
+              </div>
             </div>
 
             <!-- Fixture list toggle -->

@@ -47,6 +47,8 @@ export function useApi() {
       client<User>('/users', { method: 'POST', body }),
     updateUser: (id: number, body: UpdateUserRequest) =>
       client<User>(`/users/${id}`, { method: 'PUT', body }),
+    updateUserRole: (id: number, role: 'admin' | 'user') =>
+      client<User>(`/users/${id}/role`, { method: 'PATCH', body: { role } }),
     deleteUser: (id: number) =>
       client(`/users/${id}`, { method: 'DELETE' }),
     activateUser: (id: number) =>

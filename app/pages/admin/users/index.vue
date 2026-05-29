@@ -36,6 +36,44 @@ const sorted = computed(() =>
 
 const pendingCount = computed(() => pendingUsers.value?.length ?? 0)
 
+// --- Role toggle ---
+const roleOpen = ref(false)
+const roleTarget = ref<User | null>(null)
+const togglingRoleId = ref<number | null>(null)
+
+function openRoleToggle(user: User) {
+  roleTarget.value = user
+  roleOpen.value = true
+}
+
+async function confirmRoleToggle() {
+  if (!roleTarget.value) return
+  const user = roleTarget.value
+  const newRole = user.role === 'admin' ? 'user' : 'admin'
+  togglingRoleId.value = user.id
+  roleOpen.value = false
+  try {
+    await api.updateUserRole(user.id, newRole)
+    await refreshUsers()
+    toast.add({
+      title: 'Rolle geändert',
+      description: `${user.username} ist jetzt ${newRole === 'admin' ? 'Admin' : 'Benutzer'}.`,
+      color: 'success',
+      icon: 'i-lucide-check-circle'
+    })
+  } catch {
+    toast.add({
+      title: 'Fehler',
+      description: 'Rolle konnte nicht geändert werden.',
+      color: 'error',
+      icon: 'i-lucide-circle-alert'
+    })
+  } finally {
+    togglingRoleId.value = null
+    roleTarget.value = null
+  }
+}
+
 // --- Activate user ---
 const activatingId = ref<number | null>(null)
 
@@ -306,12 +344,15 @@ async function saveAdjustment() {
             <p class="font-semibold text-default truncate">
               {{ user.username }}
             </p>
-            <UBadge
-              v-if="user.role === 'admin'"
-              label="Admin"
-              color="primary"
+            <UButton
+              :label="user.role === 'admin' ? 'Admin' : 'Benutzer'"
+              :color="user.role === 'admin' ? 'primary' : 'neutral'"
               variant="soft"
               size="xs"
+              :loading="togglingRoleId === user.id"
+              :disabled="user.id === auth.claims.value?.userId"
+              :title="user.id === auth.claims.value?.userId ? 'Eigene Rolle kann nicht geändert werden' : (user.role === 'admin' ? 'Zu Benutzer degradieren' : 'Zum Admin befördern')"
+              @click="openRoleToggle(user)"
             />
           </div>
           <p class="text-xs text-dimmed">
@@ -530,6 +571,39 @@ async function saveAdjustment() {
             @click="saveUsername"
           >
             Speichern
+          </UButton>
+        </div>
+      </template>
+    </UModal>
+
+    <!-- Role change confirm modal -->
+    <UModal
+      v-model:open="roleOpen"
+      :title="roleTarget?.role === 'admin' ? 'Zum Benutzer degradieren' : 'Zum Admin befördern'"
+    >
+      <template #body>
+        <p class="text-default">
+          Möchtest du die Rolle von
+          <span class="font-semibold">{{ roleTarget?.username }}</span>
+          wirklich auf
+          <span class="font-semibold">{{ roleTarget?.role === 'admin' ? 'Benutzer' : 'Admin' }}</span>
+          ändern?
+        </p>
+      </template>
+      <template #footer>
+        <div class="flex gap-3 justify-end w-full">
+          <UButton
+            variant="ghost"
+            color="neutral"
+            @click="roleOpen = false"
+          >
+            Abbrechen
+          </UButton>
+          <UButton
+            :color="roleTarget?.role === 'admin' ? 'error' : 'primary'"
+            @click="confirmRoleToggle"
+          >
+            {{ roleTarget?.role === 'admin' ? 'Degradieren' : 'Befördern' }}
           </UButton>
         </div>
       </template>

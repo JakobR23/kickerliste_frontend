@@ -37,11 +37,21 @@ const sorted = computed(() =>
 const pendingCount = computed(() => pendingUsers.value?.length ?? 0)
 
 // --- Role toggle ---
+const roleOpen = ref(false)
+const roleTarget = ref<User | null>(null)
 const togglingRoleId = ref<number | null>(null)
 
-async function toggleRole(user: User) {
+function openRoleToggle(user: User) {
+  roleTarget.value = user
+  roleOpen.value = true
+}
+
+async function confirmRoleToggle() {
+  if (!roleTarget.value) return
+  const user = roleTarget.value
   const newRole = user.role === 'admin' ? 'user' : 'admin'
   togglingRoleId.value = user.id
+  roleOpen.value = false
   try {
     await api.updateUserRole(user.id, newRole)
     await refreshUsers()
@@ -60,6 +70,7 @@ async function toggleRole(user: User) {
     })
   } finally {
     togglingRoleId.value = null
+    roleTarget.value = null
   }
 }
 
@@ -341,7 +352,7 @@ async function saveAdjustment() {
               :loading="togglingRoleId === user.id"
               :disabled="user.id === auth.claims.value?.userId"
               :title="user.id === auth.claims.value?.userId ? 'Eigene Rolle kann nicht geändert werden' : (user.role === 'admin' ? 'Zu Benutzer degradieren' : 'Zum Admin befördern')"
-              @click="toggleRole(user)"
+              @click="openRoleToggle(user)"
             />
           </div>
           <p class="text-xs text-dimmed">
@@ -560,6 +571,39 @@ async function saveAdjustment() {
             @click="saveUsername"
           >
             Speichern
+          </UButton>
+        </div>
+      </template>
+    </UModal>
+
+    <!-- Role change confirm modal -->
+    <UModal
+      v-model:open="roleOpen"
+      :title="roleTarget?.role === 'admin' ? 'Zum Benutzer degradieren' : 'Zum Admin befördern'"
+    >
+      <template #body>
+        <p class="text-default">
+          Möchtest du die Rolle von
+          <span class="font-semibold">{{ roleTarget?.username }}</span>
+          wirklich auf
+          <span class="font-semibold">{{ roleTarget?.role === 'admin' ? 'Benutzer' : 'Admin' }}</span>
+          ändern?
+        </p>
+      </template>
+      <template #footer>
+        <div class="flex gap-3 justify-end w-full">
+          <UButton
+            variant="ghost"
+            color="neutral"
+            @click="roleOpen = false"
+          >
+            Abbrechen
+          </UButton>
+          <UButton
+            :color="roleTarget?.role === 'admin' ? 'error' : 'primary'"
+            @click="confirmRoleToggle"
+          >
+            {{ roleTarget?.role === 'admin' ? 'Degradieren' : 'Befördern' }}
           </UButton>
         </div>
       </template>

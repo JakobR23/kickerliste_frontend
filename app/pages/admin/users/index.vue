@@ -36,6 +36,33 @@ const sorted = computed(() =>
 
 const pendingCount = computed(() => pendingUsers.value?.length ?? 0)
 
+// --- Role toggle ---
+const togglingRoleId = ref<number | null>(null)
+
+async function toggleRole(user: User) {
+  const newRole = user.role === 'admin' ? 'user' : 'admin'
+  togglingRoleId.value = user.id
+  try {
+    await api.updateUserRole(user.id, newRole)
+    await refreshUsers()
+    toast.add({
+      title: 'Rolle geändert',
+      description: `${user.username} ist jetzt ${newRole === 'admin' ? 'Admin' : 'Benutzer'}.`,
+      color: 'success',
+      icon: 'i-lucide-check-circle'
+    })
+  } catch {
+    toast.add({
+      title: 'Fehler',
+      description: 'Rolle konnte nicht geändert werden.',
+      color: 'error',
+      icon: 'i-lucide-circle-alert'
+    })
+  } finally {
+    togglingRoleId.value = null
+  }
+}
+
 // --- Activate user ---
 const activatingId = ref<number | null>(null)
 
@@ -306,12 +333,15 @@ async function saveAdjustment() {
             <p class="font-semibold text-default truncate">
               {{ user.username }}
             </p>
-            <UBadge
-              v-if="user.role === 'admin'"
-              label="Admin"
-              color="primary"
+            <UButton
+              :label="user.role === 'admin' ? 'Admin' : 'Benutzer'"
+              :color="user.role === 'admin' ? 'primary' : 'neutral'"
               variant="soft"
               size="xs"
+              :loading="togglingRoleId === user.id"
+              :disabled="user.id === auth.claims.value?.userId"
+              :title="user.id === auth.claims.value?.userId ? 'Eigene Rolle kann nicht geändert werden' : (user.role === 'admin' ? 'Zu Benutzer degradieren' : 'Zum Admin befördern')"
+              @click="toggleRole(user)"
             />
           </div>
           <p class="text-xs text-dimmed">

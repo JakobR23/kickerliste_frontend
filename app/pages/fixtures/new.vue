@@ -21,6 +21,13 @@ const resultOptions = [
   { label: 'Unentschieden', value: 'draw' }
 ]
 
+// datetime-local value in the browser's local timezone (not UTC)
+function localDatetimeValue(date = new Date()): string {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+    + `T${pad(date.getHours())}:${pad(date.getMinutes())}`
+}
+
 const state = reactive({
   team1Id: undefined as number | undefined,
   team2Id: undefined as number | undefined,
@@ -28,7 +35,7 @@ const state = reactive({
   team1Score: null as number | null,
   team2Score: null as number | null,
   value: 1,
-  playedAt: new Date().toISOString().slice(0, 16)
+  playedAt: localDatetimeValue()
 })
 
 const errorMsg = ref('')

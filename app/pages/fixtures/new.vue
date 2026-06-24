@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed, watch } from 'vue'
 import { useAsyncData, useToast, navigateTo } from '#imports'
 import { useApi } from '~/composables/useApi'
 import { useTeamMap } from '~/composables/useTeamMap'
@@ -13,13 +13,26 @@ const { data: teams, pending: teamsLoading } = useAsyncData<Team[]>(
   () => api.getTeams()
 )
 
-const { teamOptions } = useTeamMap(teams)
+const { teamOptions, teamNameOrNull } = useTeamMap(teams)
 
-const resultOptions = [
-  { label: 'Team 1 gewinnt', value: 'team_1' },
-  { label: 'Team 2 gewinnt', value: 'team_2' },
+// Show the actual team name in the result options when one is selected and
+// named; fall back to the positional "Team 1"/"Team 2" otherwise.
+function sideLabel(id: number | undefined, fallback: string): string {
+  return (id ? teamNameOrNull(id) : null) ?? fallback
+}
+
+const resultOptions = computed(() => [
+  { label: `${sideLabel(state.team1Id, 'Team 1')} gewinnt`, value: 'team_1' },
+  { label: `${sideLabel(state.team2Id, 'Team 2')} gewinnt`, value: 'team_2' },
   { label: 'Unentschieden', value: 'draw' }
-]
+])
+
+// datetime-local value in the browser's local timezone (not UTC)
+function localDatetimeValue(date = new Date()): string {
+  const pad = (n: number) => String(n).padStart(2, '0')
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`
+    + `T${pad(date.getHours())}:${pad(date.getMinutes())}`
+}
 
 const state = reactive({
   team1Id: undefined as number | undefined,
@@ -28,11 +41,28 @@ const state = reactive({
   team1Score: null as number | null,
   team2Score: null as number | null,
   value: 1,
-  playedAt: new Date().toISOString().slice(0, 16)
+  playedAt: localDatetimeValue()
 })
 
 const errorMsg = ref('')
 const loading = ref(false)
+
+function hasScore(v: number | null): v is number {
+  return typeof v === 'number' && Number.isFinite(v)
+}
+
+const scoresComplete = computed(() =>
+  hasScore(state.team1Score) && hasScore(state.team2Score)
+)
+
+// Derive the result automatically once both scores are filled in.
+watch(
+  () => [state.team1Score, state.team2Score] as const,
+  ([s1, s2]) => {
+    if (!hasScore(s1) || !hasScore(s2)) return
+    state.result = s1 > s2 ? 'team_1' : s1 < s2 ? 'team_2' : 'draw'
+  }
+)
 
 async function onSubmit() {
   if (!state.team1Id || !state.team2Id) {
@@ -147,10 +177,12 @@ async function onSubmit() {
           label="Ergebnis"
           name="result"
           required
+          :help="scoresComplete ? 'Automatisch aus den Toren ermittelt.' : undefined"
         >
           <USelect
             v-model="state.result"
             :items="resultOptions"
+            :disabled="scoresComplete"
             class="w-full"
           />
         </UFormField>

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { reactive, ref } from 'vue'
+import { reactive, ref, computed } from 'vue'
 import { useAsyncData, useToast, navigateTo } from '#imports'
 import { useApi } from '~/composables/useApi'
 import { useTeamMap } from '~/composables/useTeamMap'
@@ -13,13 +13,19 @@ const { data: teams, pending: teamsLoading } = useAsyncData<Team[]>(
   () => api.getTeams()
 )
 
-const { teamOptions } = useTeamMap(teams)
+const { teamOptions, teamNameOrNull } = useTeamMap(teams)
 
-const resultOptions = [
-  { label: 'Team 1 gewinnt', value: 'team_1' },
-  { label: 'Team 2 gewinnt', value: 'team_2' },
+// Show the actual team name in the result options when one is selected and
+// named; fall back to the positional "Team 1"/"Team 2" otherwise.
+function sideLabel(id: number | undefined, fallback: string): string {
+  return (id ? teamNameOrNull(id) : null) ?? fallback
+}
+
+const resultOptions = computed(() => [
+  { label: `${sideLabel(state.team1Id, 'Team 1')} gewinnt`, value: 'team_1' },
+  { label: `${sideLabel(state.team2Id, 'Team 2')} gewinnt`, value: 'team_2' },
   { label: 'Unentschieden', value: 'draw' }
-]
+])
 
 // datetime-local value in the browser's local timezone (not UTC)
 function localDatetimeValue(date = new Date()): string {

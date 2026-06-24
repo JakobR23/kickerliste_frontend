@@ -3,9 +3,10 @@ import type { Ref } from 'vue'
 import type { Team, Fixture } from '~/types/api'
 
 export function useTeamMap(teams: Ref<Team[] | null | undefined>) {
-  const teamMap = computed(() => {
-    const map = new Map<number, string>()
-    teams.value?.forEach(t => map.set(t.id, t.name ?? `Team #${t.id}`))
+  // Maps team id → its configured name, or null when the team is unnamed.
+  const nameMap = computed(() => {
+    const map = new Map<number, string | null>()
+    teams.value?.forEach(t => map.set(t.id, t.name ?? null))
     return map
   })
 
@@ -17,7 +18,13 @@ export function useTeamMap(teams: Ref<Team[] | null | undefined>) {
   )
 
   function teamName(id: number): string {
-    return teamMap.value.get(id) ?? `Team #${id}`
+    return nameMap.value.get(id) ?? `Team #${id}`
+  }
+
+  // The configured name, or null when unnamed/unknown — lets callers pick
+  // their own fallback (e.g. "Team 1" rather than "Team #5").
+  function teamNameOrNull(id: number): string | null {
+    return nameMap.value.get(id) ?? null
   }
 
   function resultLabel(f: Fixture): string {
@@ -26,5 +33,5 @@ export function useTeamMap(teams: Ref<Team[] | null | undefined>) {
     return `${winnerName} gewinnt`
   }
 
-  return { teamName, teamOptions, resultLabel }
+  return { teamName, teamNameOrNull, teamOptions, resultLabel }
 }

@@ -1,10 +1,12 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useAsyncData, useToast, navigateTo } from '#imports'
 import { useAuthStore } from '~/composables/useAuthStore'
 import { useApi } from '~/composables/useApi'
 import { useTeamMap } from '~/composables/useTeamMap'
+import { useFixturesByDay } from '~/composables/useFixturesByDay'
 import type { Fixture, Team } from '~/types/api'
+import { formatTime } from '~/utils/format'
 
 const auth = useAuthStore()
 const api = useApi()
@@ -23,11 +25,7 @@ const { data: pendingFixtures, pending: loading, refresh } = useAsyncData<Fixtur
   () => api.getFixtures(undefined, 'pending')
 )
 
-const sorted = computed(() =>
-  [...(pendingFixtures.value ?? [])].sort(
-    (a, b) => new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime()
-  )
-)
+const { days } = useFixturesByDay(pendingFixtures)
 
 const actionLoading = ref<number | null>(null)
 
@@ -111,76 +109,83 @@ async function reject(id: number) {
       />
     </div>
 
-    <!-- Pending list -->
+    <!-- Pending list grouped by day -->
     <div
-      v-else-if="sorted.length"
+      v-else-if="days.length"
       class="space-y-3"
     >
-      <UCard
-        v-for="f in sorted"
-        :key="f.id"
+      <FixtureDayGroup
+        v-for="day in days"
+        :key="day.key"
+        :date="day.date"
+        :count="day.fixtures.length"
       >
-        <div class="flex items-start gap-4">
-          <!-- Date + ID -->
-          <div class="shrink-0 text-center w-16">
-            <p class="text-xs text-dimmed font-medium leading-snug">
-              {{ formatDateTime(f.playedAt) }}
-            </p>
-            <p class="text-xs text-dimmed mt-1">
-              #{{ f.id }}
-            </p>
-          </div>
-
-          <USeparator
-            orientation="vertical"
-            class="h-12"
-          />
-
-          <!-- Teams + result -->
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2 flex-wrap">
-              <span class="font-semibold text-sm text-default truncate">
-                {{ teamName(f.team1Id) }}
-              </span>
-              <span class="text-dimmed text-sm shrink-0">vs</span>
-              <span class="font-semibold text-sm text-default truncate">
-                {{ teamName(f.team2Id) }}
-              </span>
+        <UCard
+          v-for="f in day.fixtures"
+          :key="f.id"
+        >
+          <div class="flex items-start gap-4">
+            <!-- Time + ID -->
+            <div class="shrink-0 text-center w-16">
+              <p class="text-xs text-dimmed font-medium leading-snug">
+                {{ formatTime(f.playedAt) }}
+              </p>
+              <p class="text-xs text-dimmed mt-1">
+                #{{ f.id }}
+              </p>
             </div>
-            <p class="text-xs text-dimmed mt-1">
-              {{ resultLabel(f) }} · Wert: {{ f.value }}
-              <span v-if="f.team1Score !== null && f.team2Score !== null">
-                · {{ f.team1Score }}:{{ f.team2Score }}
-              </span>
-            </p>
-          </div>
 
-          <!-- Actions -->
-          <div class="flex items-center gap-2 shrink-0">
-            <UButton
-              color="error"
-              variant="soft"
-              icon="i-lucide-x"
-              size="sm"
-              :loading="actionLoading === f.id"
-              :disabled="actionLoading !== null"
-              @click="reject(f.id)"
-            >
-              Ablehnen
-            </UButton>
-            <UButton
-              color="success"
-              icon="i-lucide-check"
-              size="sm"
-              :loading="actionLoading === f.id"
-              :disabled="actionLoading !== null"
-              @click="approve(f.id)"
-            >
-              Genehmigen
-            </UButton>
+            <USeparator
+              orientation="vertical"
+              class="h-12"
+            />
+
+            <!-- Teams + result -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2 flex-wrap">
+                <span class="font-semibold text-sm text-default truncate">
+                  {{ teamName(f.team1Id) }}
+                </span>
+                <span class="text-dimmed text-sm shrink-0">vs</span>
+                <span class="font-semibold text-sm text-default truncate">
+                  {{ teamName(f.team2Id) }}
+                </span>
+              </div>
+              <p class="text-xs text-dimmed mt-1">
+                {{ resultLabel(f) }} · Wert: {{ f.value }}
+                <span v-if="f.team1Score !== null && f.team2Score !== null">
+                  · {{ f.team1Score }}:{{ f.team2Score }}
+                </span>
+              </p>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex items-center gap-2 shrink-0">
+              <UButton
+                color="error"
+                variant="soft"
+                icon="i-lucide-x"
+                size="sm"
+                :loading="actionLoading === f.id"
+                :disabled="actionLoading !== null"
+                @click="reject(f.id)"
+              >
+                Ablehnen
+              </UButton>
+              <UButton
+                color="success"
+                icon="i-lucide-check"
+                size="sm"
+                :loading="actionLoading === f.id"
+                :disabled="actionLoading !== null"
+                @click="approve(f.id)"
+              >
+                Genehmigen
+              </UButton>
+            </div>
           </div>
-        </div>
-      </UCard>
+        </UCard>
+      </FixtureDayGroup>
     </div>
 
     <!-- Empty -->

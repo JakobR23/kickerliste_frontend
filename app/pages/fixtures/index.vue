@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { computed } from 'vue'
 import { useAsyncData } from '#imports'
 import { useApi } from '~/composables/useApi'
 import { useTeamMap } from '~/composables/useTeamMap'
+import { useFixturesByDay } from '~/composables/useFixturesByDay'
 import type { Fixture, Team } from '~/types/api'
-import { formatDate, resultColor } from '~/utils/format'
+import { resultColor } from '~/utils/format'
 
 const api = useApi()
 
@@ -16,12 +16,7 @@ const { data: fixtures, pending, error, refresh } = useAsyncData<Fixture[]>(
 const { data: teams } = useAsyncData<Team[]>('teams-for-fixtures', () => api.getTeams())
 const { teamName, resultLabel } = useTeamMap(teams)
 
-const sorted = computed(() => {
-  if (!fixtures.value) return []
-  return [...fixtures.value].sort(
-    (a, b) => new Date(b.playedAt).getTime() - new Date(a.playedAt).getTime()
-  )
-})
+const { days } = useFixturesByDay(fixtures)
 </script>
 
 <template>
@@ -78,75 +73,79 @@ const sorted = computed(() => {
       </template>
     </UAlert>
 
-    <!-- Fixture list -->
+    <!-- Fixture list grouped by day -->
     <div
-      v-else-if="sorted.length"
+      v-else-if="days.length"
       class="space-y-3"
     >
-      <UCard
-        v-for="f in sorted"
-        :key="f.id"
-        class="hover:bg-accented transition-colors"
+      <FixtureDayGroup
+        v-for="day in days"
+        :key="day.key"
+        :date="day.date"
+        :count="day.fixtures.length"
       >
-        <div class="flex items-center gap-4">
-          <!-- Date + Value -->
-          <div class="shrink-0 text-center w-16">
-            <p class="text-xs text-dimmed font-medium">
-              {{ formatDate(f.playedAt) }}
-            </p>
-            <p class="text-xs text-dimmed mt-0.5">
-              Wert: {{ f.value }}
-            </p>
-          </div>
-
-          <USeparator
-            orientation="vertical"
-            class="h-10"
-          />
-
-          <!-- Teams -->
-          <div class="flex-1 min-w-0">
-            <div class="flex items-center gap-2">
-              <span
-                :class="[
-                  'font-semibold text-sm truncate',
-                  f.result === 'team_1' ? 'text-amber-500' : 'text-default'
-                ]"
-              >
-                {{ teamName(f.team1Id) }}
-              </span>
-              <span class="text-dimmed text-sm shrink-0">vs</span>
-              <span
-                :class="[
-                  'font-semibold text-sm truncate',
-                  f.result === 'team_2' ? 'text-amber-500' : 'text-default'
-                ]"
-              >
-                {{ teamName(f.team2Id) }}
-              </span>
+        <UCard
+          v-for="f in day.fixtures"
+          :key="f.id"
+          class="hover:bg-accented transition-colors"
+        >
+          <div class="flex items-center gap-4">
+            <!-- Value -->
+            <div class="shrink-0 text-center w-16">
+              <p class="text-xs text-dimmed mt-0.5">
+                Wert: {{ f.value }}
+              </p>
             </div>
 
-            <!-- Scores -->
-            <div
-              v-if="f.team1Score !== null && f.team2Score !== null"
-              class="flex items-center gap-2 mt-1"
-            >
-              <span class="text-lg font-bold tabular-nums text-default">{{ f.team1Score }}</span>
-              <span class="text-dimmed text-sm">:</span>
-              <span class="text-lg font-bold tabular-nums text-default">{{ f.team2Score }}</span>
-            </div>
-          </div>
-
-          <!-- Result badge -->
-          <div class="shrink-0">
-            <UBadge
-              :label="resultLabel(f)"
-              :color="resultColor(f.result)"
-              variant="soft"
+            <USeparator
+              orientation="vertical"
+              class="h-10"
             />
+
+            <!-- Teams -->
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center gap-2">
+                <span
+                  :class="[
+                    'font-semibold text-sm truncate',
+                    f.result === 'team_1' ? 'text-amber-500' : 'text-default'
+                  ]"
+                >
+                  {{ teamName(f.team1Id) }}
+                </span>
+                <span class="text-dimmed text-sm shrink-0">vs</span>
+                <span
+                  :class="[
+                    'font-semibold text-sm truncate',
+                    f.result === 'team_2' ? 'text-amber-500' : 'text-default'
+                  ]"
+                >
+                  {{ teamName(f.team2Id) }}
+                </span>
+              </div>
+
+              <!-- Scores -->
+              <div
+                v-if="f.team1Score !== null && f.team2Score !== null"
+                class="flex items-center gap-2 mt-1"
+              >
+                <span class="text-lg font-bold tabular-nums text-default">{{ f.team1Score }}</span>
+                <span class="text-dimmed text-sm">:</span>
+                <span class="text-lg font-bold tabular-nums text-default">{{ f.team2Score }}</span>
+              </div>
+            </div>
+
+            <!-- Result badge -->
+            <div class="shrink-0">
+              <UBadge
+                :label="resultLabel(f)"
+                :color="resultColor(f.result)"
+                variant="soft"
+              />
+            </div>
           </div>
-        </div>
-      </UCard>
+        </UCard>
+      </FixtureDayGroup>
     </div>
 
     <!-- Empty -->

@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useAsyncData, useToast, navigateTo } from '#imports'
 import { useAuthStore } from '~/composables/useAuthStore'
 import { useApi } from '~/composables/useApi'
 import { useTeamMap } from '~/composables/useTeamMap'
 import { useFixturesByDay } from '~/composables/useFixturesByDay'
-import type { Fixture, Team } from '~/types/api'
+import type { Fixture, FixtureStatus, Team } from '~/types/api'
 import { formatTime } from '~/utils/format'
 
 const auth = useAuthStore()
@@ -20,13 +20,57 @@ onMounted(() => {
 const { data: teams } = useAsyncData<Team[]>('teams-admin-fixtures', () => api.getTeams())
 const { teamName, resultLabel } = useTeamMap(teams)
 
-const { data: pendingFixtures, pending: loading, refresh } = useAsyncData<Fixture[]>(
-  'admin-pending-fixtures',
-  () => api.getFixtures(undefined, 'pending')
+const { data: fixtures, pending: loading, refresh } = useAsyncData<Fixture[]>(
+  'admin-fixtures',
+  () => api.getFixtures()
 )
 
-const { days } = useFixturesByDay(pendingFixtures)
+// --- Status filter ---
+type StatusFilter = FixtureStatus | 'all'
 
+const filterOptions = [
+  { value: 'pending', label: 'Ausstehend' },
+  { value: 'approved', label: 'Genehmigt' },
+  { value: 'rejected', label: 'Abgelehnt' },
+  { value: 'all', label: 'Alle' }
+] as const
+
+const statusFilter = ref<StatusFilter>('pending')
+
+const counts = computed(() => {
+  const all = fixtures.value ?? []
+  return {
+    pending: all.filter(f => f.status === 'pending').length,
+    approved: all.filter(f => f.status === 'approved').length,
+    rejected: all.filter(f => f.status === 'rejected').length,
+    all: all.length
+  }
+})
+
+const filtered = computed(() => {
+  const all = fixtures.value ?? []
+  return statusFilter.value === 'all'
+    ? all
+    : all.filter(f => f.status === statusFilter.value)
+})
+
+const { days } = useFixturesByDay(filtered)
+
+function statusLabel(s: FixtureStatus): string {
+  return s === 'approved' ? 'Genehmigt' : s === 'rejected' ? 'Abgelehnt' : 'Ausstehend'
+}
+
+function statusColor(s: FixtureStatus): 'success' | 'error' | 'warning' {
+  return s === 'approved' ? 'success' : s === 'rejected' ? 'error' : 'warning'
+}
+
+const emptyText = computed(() =>
+  statusFilter.value === 'all'
+    ? 'Keine Spiele vorhanden.'
+    : `Keine Spiele mit Status „${statusLabel(statusFilter.value)}“.`
+)
+
+// --- Actions ---
 const actionLoading = ref<number | null>(null)
 
 async function approve(id: number) {
@@ -85,7 +129,7 @@ async function reject(id: number) {
           class="w-6 h-6 text-amber-500"
         />
         <h1 class="text-2xl font-bold text-default">
-          Ausstehende Spiele
+          Spiele
         </h1>
       </div>
       <UButton
@@ -95,6 +139,27 @@ async function reject(id: number) {
         :loading="loading"
         @click="() => refresh()"
       />
+    </div>
+
+    <!-- Status filter -->
+    <div class="flex gap-1 p-1 bg-elevated rounded-lg border border-default mb-4">
+      <button
+        v-for="opt in filterOptions"
+        :key="opt.value"
+        :class="[
+          'flex-1 flex items-center justify-center gap-1.5 px-2 py-2 rounded-md text-sm font-medium transition-colors',
+          statusFilter === opt.value ? 'bg-default text-default shadow-sm' : 'text-muted hover:text-default'
+        ]"
+        @click="statusFilter = opt.value"
+      >
+        <span class="truncate">{{ opt.label }}</span>
+        <UBadge
+          :label="String(counts[opt.value])"
+          :color="statusFilter === opt.value ? 'primary' : 'neutral'"
+          variant="soft"
+          size="xs"
+        />
+      </button>
     </div>
 
     <!-- Loading -->
@@ -109,7 +174,7 @@ async function reject(id: number) {
       />
     </div>
 
-    <!-- Pending list grouped by day -->
+    <!-- Fixture list grouped by day -->
     <div
       v-else-if="days.length"
       class="space-y-3"
@@ -159,29 +224,37 @@ async function reject(id: number) {
               </p>
             </div>
 
-            <!-- Actions -->
+            <!-- Actions / status -->
             <div class="flex items-center gap-2 shrink-0">
-              <UButton
-                color="error"
+              <template v-if="f.status === 'pending'">
+                <UButton
+                  color="error"
+                  variant="soft"
+                  icon="i-lucide-x"
+                  size="sm"
+                  :loading="actionLoading === f.id"
+                  :disabled="actionLoading !== null"
+                  @click="reject(f.id)"
+                >
+                  Ablehnen
+                </UButton>
+                <UButton
+                  color="success"
+                  icon="i-lucide-check"
+                  size="sm"
+                  :loading="actionLoading === f.id"
+                  :disabled="actionLoading !== null"
+                  @click="approve(f.id)"
+                >
+                  Genehmigen
+                </UButton>
+              </template>
+              <UBadge
+                v-else
+                :label="statusLabel(f.status)"
+                :color="statusColor(f.status)"
                 variant="soft"
-                icon="i-lucide-x"
-                size="sm"
-                :loading="actionLoading === f.id"
-                :disabled="actionLoading !== null"
-                @click="reject(f.id)"
-              >
-                Ablehnen
-              </UButton>
-              <UButton
-                color="success"
-                icon="i-lucide-check"
-                size="sm"
-                :loading="actionLoading === f.id"
-                :disabled="actionLoading !== null"
-                @click="approve(f.id)"
-              >
-                Genehmigen
-              </UButton>
+              />
             </div>
           </div>
         </UCard>
@@ -197,7 +270,7 @@ async function reject(id: number) {
         name="i-lucide-clipboard-check"
         class="w-10 h-10 mx-auto mb-3 opacity-40"
       />
-      <p>Keine ausstehenden Spiele.</p>
+      <p>{{ emptyText }}</p>
     </div>
   </div>
 </template>

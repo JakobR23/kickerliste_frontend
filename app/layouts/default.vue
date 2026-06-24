@@ -20,7 +20,7 @@ const navItems = [
 ]
 
 const adminNavItems = [
-  { icon: 'i-lucide-clipboard-check', label: 'Ausstehende Spiele', to: '/admin/fixtures' },
+  { icon: 'i-lucide-clipboard-check', label: 'Spielverwaltung', to: '/admin/fixtures' },
   { icon: 'i-lucide-user-cog', label: 'Benutzerverwaltung', to: '/admin/users' }
 ]
 

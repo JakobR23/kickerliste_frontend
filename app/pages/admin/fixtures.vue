@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
 import { useAsyncData, useToast, navigateTo } from '#imports'
 import { useAuthStore } from '~/composables/useAuthStore'
 import { useApi } from '~/composables/useApi'
 import { useTeamMap } from '~/composables/useTeamMap'
 import { useFixturesByDay } from '~/composables/useFixturesByDay'
-import type { Fixture, FixtureStatus, Team } from '~/types/api'
+import type { Fixture, FixtureStatus, MatchResult, Team } from '~/types/api'
 import { formatTime } from '~/utils/format'
 
 const auth = useAuthStore()
@@ -18,7 +18,7 @@ onMounted(() => {
 })
 
 const { data: teams } = useAsyncData<Team[]>('teams-admin-fixtures', () => api.getTeams())
-const { teamName, resultLabel } = useTeamMap(teams)
+const { teamName, teamNameOrNull, resultLabel } = useTeamMap(teams)
 
 const { data: fixtures, pending: loading, refresh } = useAsyncData<Fixture[]>(
   'admin-fixtures',
@@ -69,6 +69,102 @@ const emptyText = computed(() =>
     ? 'Keine Spiele vorhanden.'
     : `Keine Spiele mit Status „${statusLabel(statusFilter.value)}“.`
 )
+
+// --- Edit ---
+const editOpen = ref(false)
+const editTarget = ref<Fixture | null>(null)
+const editState = reactive({
+  result: 'team_1' as MatchResult,
+  team1Score: null as number | null,
+  team2Score: null as number | null,
+  value: 1
+})
+const editError = ref('')
+const editLoading = ref(false)
+
+function hasScore(v: number | null): v is number {
+  return typeof v === 'number' && Number.isFinite(v)
+}
+
+const editScoresComplete = computed(() =>
+  hasScore(editState.team1Score) && hasScore(editState.team2Score)
+)
+
+// Show the actual team names in the result options, falling back to
+// the positional "Team 1"/"Team 2" when a team is unnamed.
+function sideLabel(id: number | undefined, fallback: string): string {
+  return (id ? teamNameOrNull(id) : null) ?? fallback
+}
+
+const resultOptions = computed(() => {
+  const t = editTarget.value
+  return [
+    { label: `${sideLabel(t?.team1Id, 'Team 1')} gewinnt`, value: 'team_1' },
+    { label: `${sideLabel(t?.team2Id, 'Team 2')} gewinnt`, value: 'team_2' },
+    { label: 'Unentschieden', value: 'draw' }
+  ]
+})
+
+// Derive the result automatically once both scores are filled in.
+watch(
+  () => [editState.team1Score, editState.team2Score] as const,
+  ([s1, s2]) => {
+    if (!hasScore(s1) || !hasScore(s2)) return
+    editState.result = s1 > s2 ? 'team_1' : s1 < s2 ? 'team_2' : 'draw'
+  }
+)
+
+// Reset transient state when the modal closes.
+watch(editOpen, (open) => {
+  if (!open) {
+    editLoading.value = false
+    editError.value = ''
+  }
+})
+
+function openEdit(f: Fixture) {
+  editTarget.value = f
+  editState.result = f.result
+  editState.team1Score = f.team1Score
+  editState.team2Score = f.team2Score
+  editState.value = f.value
+  editError.value = ''
+  editOpen.value = true
+}
+
+async function saveEdit() {
+  if (!editTarget.value) return
+  const s1 = editState.team1Score
+  const s2 = editState.team2Score
+  const bothScores = hasScore(s1) && hasScore(s2)
+  const noScores = !hasScore(s1) && !hasScore(s2)
+  if (!bothScores && !noScores) {
+    editError.value = 'Bitte beide Toranzahlen angeben oder beide leer lassen.'
+    return
+  }
+  editLoading.value = true
+  editError.value = ''
+  try {
+    await api.updateFixture(editTarget.value.id, {
+      result: editState.result,
+      team1Score: bothScores ? s1 : null,
+      team2Score: bothScores ? s2 : null,
+      value: editState.value
+    })
+    await refresh()
+    editOpen.value = false
+    toast.add({ title: 'Spiel aktualisiert', color: 'success', icon: 'i-lucide-check-circle' })
+  } catch (e: unknown) {
+    const err = e as { status?: number, data?: { message?: string } }
+    editError.value = err.status === 500
+      ? 'Serverfehler. Bitte erneut versuchen.'
+      : err.status === 422
+        ? 'Bitte beide Toranzahlen angeben oder beide leer lassen.'
+        : (err.data?.message ?? 'Aktualisierung fehlgeschlagen.')
+  } finally {
+    editLoading.value = false
+  }
+}
 
 // --- Actions ---
 const actionLoading = ref<number | null>(null)
@@ -188,6 +284,9 @@ async function reject(id: number) {
         <UCard
           v-for="f in day.fixtures"
           :key="f.id"
+          class="cursor-pointer hover:bg-accented transition-colors"
+          title="Zum Bearbeiten klicken"
+          @click="openEdit(f)"
         >
           <div class="flex items-start gap-4">
             <!-- Time + ID -->
@@ -234,7 +333,7 @@ async function reject(id: number) {
                   size="sm"
                   :loading="actionLoading === f.id"
                   :disabled="actionLoading !== null"
-                  @click="reject(f.id)"
+                  @click.stop="reject(f.id)"
                 >
                   Ablehnen
                 </UButton>
@@ -244,7 +343,7 @@ async function reject(id: number) {
                   size="sm"
                   :loading="actionLoading === f.id"
                   :disabled="actionLoading !== null"
-                  @click="approve(f.id)"
+                  @click.stop="approve(f.id)"
                 >
                   Genehmigen
                 </UButton>
@@ -272,5 +371,105 @@ async function reject(id: number) {
       />
       <p>{{ emptyText }}</p>
     </div>
+
+    <!-- Edit fixture modal -->
+    <UModal
+      v-model:open="editOpen"
+      :title="editTarget ? `Spiel #${editTarget.id} bearbeiten` : 'Spiel bearbeiten'"
+    >
+      <template #body>
+        <div class="space-y-4">
+          <!-- Teams (read-only) -->
+          <div
+            v-if="editTarget"
+            class="flex items-center justify-center gap-2 text-sm font-semibold text-default"
+          >
+            <span class="truncate">{{ teamName(editTarget.team1Id) }}</span>
+            <span class="text-dimmed font-normal">vs</span>
+            <span class="truncate">{{ teamName(editTarget.team2Id) }}</span>
+          </div>
+
+          <!-- Scores -->
+          <div class="grid grid-cols-2 gap-4">
+            <UFormField
+              label="Tore Team 1"
+              name="team1Score"
+            >
+              <UInput
+                v-model.number="editState.team1Score"
+                type="number"
+                min="0"
+                placeholder="Optional"
+                class="w-full"
+              />
+            </UFormField>
+            <UFormField
+              label="Tore Team 2"
+              name="team2Score"
+            >
+              <UInput
+                v-model.number="editState.team2Score"
+                type="number"
+                min="0"
+                placeholder="Optional"
+                class="w-full"
+              />
+            </UFormField>
+          </div>
+
+          <!-- Result -->
+          <UFormField
+            label="Ergebnis"
+            name="result"
+            :help="editScoresComplete ? 'Automatisch aus den Toren ermittelt.' : undefined"
+          >
+            <USelect
+              v-model="editState.result"
+              :items="resultOptions"
+              :disabled="editScoresComplete"
+              class="w-full"
+            />
+          </UFormField>
+
+          <!-- Value -->
+          <UFormField
+            label="Spielwert (Punkte)"
+            name="value"
+          >
+            <UInput
+              v-model.number="editState.value"
+              type="number"
+              min="0"
+              class="w-full"
+            />
+          </UFormField>
+
+          <UAlert
+            v-if="editError"
+            color="error"
+            variant="soft"
+            :description="editError"
+            icon="i-lucide-circle-alert"
+          />
+        </div>
+      </template>
+      <template #footer>
+        <div class="flex gap-3 justify-end w-full">
+          <UButton
+            variant="ghost"
+            color="neutral"
+            @click="editOpen = false"
+          >
+            Abbrechen
+          </UButton>
+          <UButton
+            :loading="editLoading"
+            @click="saveEdit"
+          >
+            Speichern
+          </UButton>
+        </div>
+      </template>
+    </UModal>
   </div>
 </template>

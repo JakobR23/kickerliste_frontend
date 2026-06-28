@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useAsyncData, useToast } from '#imports'
 import { useApi } from '~/composables/useApi'
-import type { Team } from '~/types/api'
+import type { Team, User } from '~/types/api'
 
 const api = useApi()
 const toast = useToast()
@@ -12,18 +12,50 @@ const { data: teams, pending, error, refresh } = useAsyncData<Team[]>(
   () => api.getTeams()
 )
 
+const { data: usersData } = useAsyncData<User[]>('users-for-teams', () => api.getUsers())
+const players = computed(() => usersData.value ?? [])
+
 const createModalOpen = ref(false)
 const newTeamName = ref('')
+const member1Id = ref<number | undefined>(undefined)
+const member2Id = ref<number | undefined>(undefined)
 const createLoading = ref(false)
+
+// Reset the form whenever the modal closes.
+watch(createModalOpen, (open) => {
+  if (!open) {
+    newTeamName.value = ''
+    member1Id.value = undefined
+    member2Id.value = undefined
+  }
+})
 
 async function createTeam() {
   createLoading.value = true
   try {
-    await api.createTeam({ name: newTeamName.value.trim() || null })
-    toast.add({ title: 'Team erstellt', color: 'success', icon: 'i-lucide-check-circle' })
-    newTeamName.value = ''
+    const team = await api.createTeam({ name: newTeamName.value.trim() || null })
+
+    // POST /teams only takes a name, so add the chosen members afterwards.
+    const memberIds = [...new Set([member1Id.value, member2Id.value])]
+      .filter((v): v is number => typeof v === 'number')
+    const results = await Promise.allSettled(
+      memberIds.map(userId => api.addTeamMember(team.id, { userId }))
+    )
+    const failed = results.filter(r => r.status === 'rejected').length
+
     createModalOpen.value = false
     await refresh()
+
+    if (failed > 0) {
+      toast.add({
+        title: 'Team erstellt',
+        description: `${failed} Mitglied${failed === 1 ? '' : 'er'} konnte${failed === 1 ? '' : 'n'} nicht hinzugefügt werden.`,
+        color: 'warning',
+        icon: 'i-lucide-triangle-alert'
+      })
+    } else {
+      toast.add({ title: 'Team erstellt', color: 'success', icon: 'i-lucide-check-circle' })
+    }
   } catch (e: unknown) {
     const err = e as { data?: { message?: string }, status?: number }
     toast.add({
@@ -117,6 +149,32 @@ async function createTeam() {
               <p class="font-semibold text-default truncate">
                 {{ team.name ?? `Team #${team.id}` }}
               </p>
+
+              <!-- Members -->
+              <div
+                v-if="team.members.length"
+                class="flex items-center gap-2 mt-2"
+              >
+                <div class="flex -space-x-2">
+                  <UAvatar
+                    v-for="m in team.members"
+                    :key="m.id"
+                    :alt="m.username"
+                    size="2xs"
+                    class="ring-2 ring-default"
+                  />
+                </div>
+                <span class="text-xs text-muted truncate">
+                  {{ team.members.map(m => m.username).join(' & ') }}
+                </span>
+              </div>
+              <p
+                v-else
+                class="text-xs text-dimmed italic mt-2"
+              >
+                Noch keine Mitglieder
+              </p>
+
               <p class="text-xs text-dimmed mt-1">
                 Erstellt: {{ formatDate(team.created_at) }}
               </p>
@@ -157,20 +215,48 @@ async function createTeam() {
       title="Team erstellen"
     >
       <template #body>
-        <UFormField
-          label="Teamname"
-          name="name"
-        >
-          <UInput
-            v-model="newTeamName"
-            placeholder="Name (optional)"
-            class="w-full"
-            @keydown.enter="createTeam"
-          />
-        </UFormField>
-        <p class="text-xs text-muted mt-2">
-          Leer lassen für ein namenloses Team.
-        </p>
+        <div class="space-y-4">
+          <UFormField
+            label="Teamname"
+            name="name"
+            help="Leer lassen für ein namenloses Team."
+          >
+            <UInput
+              v-model="newTeamName"
+              placeholder="Name (optional)"
+              class="w-full"
+              @keydown.enter="createTeam"
+            />
+          </UFormField>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <UFormField
+              label="Mitglied 1"
+              name="member1"
+            >
+              <PlayerSelect
+                v-model="member1Id"
+                :players="players"
+                :exclude="member2Id"
+                placeholder="Spieler suchen…"
+              />
+            </UFormField>
+            <UFormField
+              label="Mitglied 2"
+              name="member2"
+            >
+              <PlayerSelect
+                v-model="member2Id"
+                :players="players"
+                :exclude="member1Id"
+                placeholder="Spieler suchen…"
+              />
+            </UFormField>
+          </div>
+          <p class="text-xs text-muted">
+            Bis zu zwei Mitglieder – können auch später ergänzt werden.
+          </p>
+        </div>
       </template>
       <template #footer>
         <div class="flex gap-3 justify-end w-full">

@@ -14,7 +14,7 @@ const { data: teams, pending, error, refresh } = useAsyncData<Team[]>(
   () => api.getTeams()
 )
 
-const { data: usersData } = useAsyncData<User[]>('users-for-teams', () => api.getUsers())
+const { data: usersData, refresh: refreshUsers } = useAsyncData<User[]>('users-for-teams', () => api.getUsers())
 const players = computed(() => usersData.value ?? [])
 
 const canRemoveMembers = computed(() => auth.isAdmin.value)
@@ -52,36 +52,33 @@ async function createTeam() {
   createLoading.value = true
   createError.value = ''
   try {
-    const team = await api.createTeam({ name: newTeamName.value.trim() || null })
-    // POST /teams only takes a name, so add the chosen members afterwards.
-    const results = await Promise.allSettled(
-      draftMembers.value.map(u => api.addTeamMember(team.id, { userId: u.id }))
-    )
-    const failed = results.filter(r => r.status === 'rejected').length
-
+    // The team and its members are created in a single request.
+    await api.createTeam({
+      name: newTeamName.value.trim() || null,
+      members: draftMembers.value.map(u => u.id)
+    })
     createModalOpen.value = false
     await refresh()
-
-    if (failed > 0) {
-      toast.add({
-        title: 'Team erstellt',
-        description: `${failed} Mitglied${failed === 1 ? '' : 'er'} konnte${failed === 1 ? '' : 'n'} nicht hinzugefügt werden.`,
-        color: 'warning',
-        icon: 'i-lucide-triangle-alert'
-      })
-    } else {
-      toast.add({ title: 'Team erstellt', color: 'success', icon: 'i-lucide-check-circle' })
-    }
+    toast.add({ title: 'Team erstellt', color: 'success', icon: 'i-lucide-check-circle' })
   } catch (e: unknown) {
     const err = e as { data?: { message?: string }, status?: number }
-    toast.add({
-      title: 'Fehler',
-      description: err.status === 500
-        ? 'Serverfehler. Bitte erneut versuchen.'
-        : (err.data?.message ?? 'Team konnte nicht erstellt werden.'),
-      color: 'error',
-      icon: 'i-lucide-circle-alert'
-    })
+    if (err.status === 422) {
+      // A selected user no longer exists; no team was created. Refresh the
+      // user list, drop stale picks, and ask the user to reselect.
+      await refreshUsers()
+      const valid = new Set(players.value.map(p => p.id))
+      draftMembers.value = draftMembers.value.filter(u => valid.has(u.id))
+      createError.value = 'Ein ausgewählter Spieler existiert nicht mehr. Bitte Auswahl prüfen und erneut versuchen.'
+    } else {
+      toast.add({
+        title: 'Fehler',
+        description: err.status === 500
+          ? 'Serverfehler. Bitte erneut versuchen.'
+          : (err.data?.message ?? 'Team konnte nicht erstellt werden.'),
+        color: 'error',
+        icon: 'i-lucide-circle-alert'
+      })
+    }
   } finally {
     createLoading.value = false
   }

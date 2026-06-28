@@ -63,8 +63,6 @@ export function useApi() {
       client<Team>(`/teams/${id}`, { method: 'PUT', body }),
     deleteTeam: (id: number) =>
       client(`/teams/${id}`, { method: 'DELETE' }),
-    getTeamMembers: (id: number) =>
-      client<User[]>(`/teams/${id}/members`),
     addTeamMember: (id: number, body: AddTeamMemberRequest) =>
       client<User>(`/teams/${id}/members`, { method: 'POST', body }),
     removeTeamMember: (teamId: number, userId: number) =>

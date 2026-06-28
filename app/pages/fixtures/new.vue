@@ -2,23 +2,27 @@
 import { reactive, ref, computed, watch } from 'vue'
 import { useAsyncData, useToast, navigateTo } from '#imports'
 import { useApi } from '~/composables/useApi'
-import { useTeamMap } from '~/composables/useTeamMap'
 import type { Team } from '~/types/api'
 
 const api = useApi()
 const toast = useToast()
 
-const { data: teams, pending: teamsLoading } = useAsyncData<Team[]>(
+const { data: teamsData, pending: teamsLoading } = useAsyncData<Team[]>(
   'teams-for-new-fixture',
   () => api.getTeams()
 )
 
-const { teamOptions, teamNameOrNull } = useTeamMap(teams)
+const teams = computed(() => teamsData.value ?? [])
+const teamsById = computed(() => new Map(teams.value.map(t => [t.id, t])))
 
-// Show the actual team name in the result options when one is selected and
-// named; fall back to the positional "Team 1"/"Team 2" otherwise.
+// Label for a side in the result options: real team name, else member names,
+// else the positional "Team 1"/"Team 2" fallback.
 function sideLabel(id: number | undefined, fallback: string): string {
-  return (id ? teamNameOrNull(id) : null) ?? fallback
+  const t = id != null ? teamsById.value.get(id) : undefined
+  if (!t) return fallback
+  if (t.name) return t.name
+  if (t.members.length) return t.members.map(m => m.username).join(' & ')
+  return fallback
 }
 
 const resultOptions = computed(() => [
@@ -145,17 +149,17 @@ async function onSubmit() {
         @submit.prevent="onSubmit"
       >
         <!-- Teams -->
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <UFormField
             label="Team 1"
             name="team1Id"
             required
           >
-            <USelect
+            <TeamSelect
               v-model="state.team1Id"
-              :items="teamOptions"
-              placeholder="Team auswählen"
-              class="w-full"
+              :teams="teams"
+              :exclude="state.team2Id"
+              placeholder="Team 1 suchen…"
             />
           </UFormField>
           <UFormField
@@ -163,11 +167,11 @@ async function onSubmit() {
             name="team2Id"
             required
           >
-            <USelect
+            <TeamSelect
               v-model="state.team2Id"
-              :items="teamOptions"
-              placeholder="Team auswählen"
-              class="w-full"
+              :teams="teams"
+              :exclude="state.team1Id"
+              placeholder="Team 2 suchen…"
             />
           </UFormField>
         </div>

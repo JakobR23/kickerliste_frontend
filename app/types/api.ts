@@ -14,6 +14,7 @@ export interface Team {
   id: number
   name: string | null
   created_at: string
+  members: User[]
 }
 
 export interface Fixture {

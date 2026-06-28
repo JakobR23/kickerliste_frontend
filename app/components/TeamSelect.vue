@@ -2,12 +2,12 @@
 import { computed } from 'vue'
 import { useAuthStore } from '~/composables/useAuthStore'
 import { useRecentTeams } from '~/composables/useRecentTeams'
-import type { TeamWithMembers } from '~/composables/useTeamsWithMembers'
+import type { Team } from '~/types/api'
 import { teamDisplayName } from '~/utils/team'
 
 const props = withDefaults(defineProps<{
   modelValue: number | undefined
-  teams: TeamWithMembers[]
+  teams: Team[]
   /** A team id to hide from the list (e.g. the opponent already chosen) */
   exclude?: number
   placeholder?: string

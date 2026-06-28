@@ -4,6 +4,7 @@ import { useAsyncData } from '#imports'
 import { useApi } from '~/composables/useApi'
 import type { Fixture, User, Team } from '~/types/api'
 import { formatDate, resultColor } from '~/utils/format'
+import { teamDisplayName } from '~/utils/team'
 
 interface H2HResult {
   winsA: number
@@ -21,7 +22,6 @@ interface PageData {
   fixtures: Fixture[]
   users: User[]
   teams: Team[]
-  membersByTeam: Record<number, User[]>
 }
 
 const api = useApi()
@@ -33,23 +33,18 @@ const { data, pending, error, refresh } = useAsyncData<PageData>('statistik-data
     api.getTeams()
   ])
 
-  const membersByTeam: Record<number, User[]> = Object.fromEntries(
-    await Promise.all(
-      teams.map(async (t: Team) => [t.id, await api.getTeamMembers(t.id)])
-    )
-  )
-
-  return { fixtures, users, teams, membersByTeam }
+  return { fixtures, users, teams }
 })
 
-// Reverse lookup: player ID → array of team IDs
+const teams = computed(() => data.value?.teams ?? [])
+
+// Reverse lookup: player ID → array of team IDs (members are embedded on teams)
 const teamsByPlayer = computed(() => {
   const map = new Map<number, number[]>()
-  if (!data.value?.membersByTeam) return map
-  for (const [teamId, members] of Object.entries(data.value.membersByTeam)) {
-    for (const member of members as User[]) {
+  for (const team of teams.value) {
+    for (const member of team.members) {
       const existing = map.get(member.id) ?? []
-      map.set(member.id, [...existing, Number(teamId)])
+      map.set(member.id, [...existing, team.id])
     }
   }
   return map
@@ -57,20 +52,9 @@ const teamsByPlayer = computed(() => {
 
 // Team name with member-name fallback
 function getTeamName(teamId: number): string {
-  const team = data.value?.teams.find(t => t.id === teamId)
-  if (!team) return `Team #${teamId}`
-  if (team.name) return team.name
-  const members = data.value?.membersByTeam[teamId] ?? []
-  if (members.length > 0) return members.map(m => m.username).join(' & ')
-  return `Team #${teamId}`
+  const team = teams.value.find(t => t.id === teamId)
+  return team ? teamDisplayName(team, team.members) : `Team #${teamId}`
 }
-
-const teamOptions = computed(() =>
-  (data.value?.teams ?? []).map(t => ({
-    label: getTeamName(t.id),
-    value: t.id
-  }))
-)
 
 const playerOptions = computed(() =>
   (data.value?.users ?? []).map(u => ({
@@ -262,39 +246,29 @@ const playerFixturesSorted = computed(() =>
               label="Team A"
               name="teamA"
             >
-              <USelect
+              <TeamSelect
                 v-model="teamAId"
-                :items="teamOptions"
-                placeholder="Team auswählen"
-                class="w-full"
+                :teams="teams"
+                :exclude="teamBId"
+                placeholder="Team A suchen…"
               />
             </UFormField>
             <UFormField
               label="Team B"
               name="teamB"
             >
-              <USelect
+              <TeamSelect
                 v-model="teamBId"
-                :items="teamOptions"
-                placeholder="Team auswählen"
-                class="w-full"
+                :teams="teams"
+                :exclude="teamAId"
+                placeholder="Team B suchen…"
               />
             </UFormField>
           </div>
         </UCard>
 
-        <!-- Same team warning -->
-        <UAlert
-          v-if="sameTeam"
-          color="warning"
-          variant="soft"
-          icon="i-lucide-triangle-alert"
-          description="Bitte zwei verschiedene Teams auswählen."
-          class="mb-4"
-        />
-
         <!-- Result -->
-        <template v-else-if="teamAId && teamBId && teamResult">
+        <template v-if="teamAId && teamBId && teamResult">
           <!-- No games -->
           <div
             v-if="teamResult.played === 0"

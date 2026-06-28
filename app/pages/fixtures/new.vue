@@ -1,14 +1,18 @@
 <script setup lang="ts">
 import { reactive, ref, computed, watch } from 'vue'
-import { useToast, navigateTo } from '#imports'
+import { useAsyncData, useToast, navigateTo } from '#imports'
 import { useApi } from '~/composables/useApi'
-import { useTeamsWithMembers } from '~/composables/useTeamsWithMembers'
+import type { Team } from '~/types/api'
 
 const api = useApi()
 const toast = useToast()
 
-const { teams, pending: teamsLoading } = useTeamsWithMembers('teams-for-new-fixture')
+const { data: teamsData, pending: teamsLoading } = useAsyncData<Team[]>(
+  'teams-for-new-fixture',
+  () => api.getTeams()
+)
 
+const teams = computed(() => teamsData.value ?? [])
 const teamsById = computed(() => new Map(teams.value.map(t => [t.id, t])))
 
 // Label for a side in the result options: real team name, else member names,

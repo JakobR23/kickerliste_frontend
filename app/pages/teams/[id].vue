@@ -20,10 +20,8 @@ const { data: team, refresh: refreshTeam } = useAsyncData<Team>(
   () => api.getTeam(teamId.value)
 )
 
-const { data: members, refresh: refreshMembers } = useAsyncData<User[]>(
-  `team-members-${teamId.value}`,
-  () => api.getTeamMembers(teamId.value)
-)
+// Members are embedded on the team object; no separate request needed.
+const members = computed(() => team.value?.members ?? [])
 
 const { data: allUsers } = useAsyncData<User[]>('all-users-team', () => api.getUsers())
 
@@ -81,7 +79,7 @@ async function addMember() {
     await api.addTeamMember(teamId.value, { userId: selectedUserId.value })
     selectedUserId.value = undefined
     addMemberOpen.value = false
-    await refreshMembers()
+    await refreshTeam()
     toast.add({ title: 'Mitglied hinzugefügt', color: 'success', icon: 'i-lucide-check-circle' })
   } catch (e: unknown) {
     const err = e as { data?: { message?: string }, status?: number }
@@ -107,7 +105,7 @@ async function removeMember(userId: number) {
   removingId.value = userId
   try {
     await api.removeTeamMember(teamId.value, userId)
-    await refreshMembers()
+    await refreshTeam()
     toast.add({ title: 'Mitglied entfernt', color: 'success', icon: 'i-lucide-check-circle' })
   } catch (e: unknown) {
     const err = e as { data?: { message?: string }, status?: number }

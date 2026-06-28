@@ -1,20 +1,19 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useAuthStore } from '~/composables/useAuthStore'
-import type { Team } from '~/types/api'
+import type { User } from '~/types/api'
 import type { EntitySelectItem } from '~/types/select'
-import { teamDisplayName } from '~/utils/team'
 
 const props = withDefaults(defineProps<{
   modelValue: number | undefined
-  teams: Team[]
-  /** A team id to hide from the list (e.g. the opponent already chosen) */
+  players: User[]
+  /** A player id to hide from the list (e.g. the opponent already chosen) */
   exclude?: number
   placeholder?: string
   disabled?: boolean
 }>(), {
   exclude: undefined,
-  placeholder: 'Team suchen…',
+  placeholder: 'Spieler suchen…',
   disabled: false
 })
 
@@ -24,13 +23,11 @@ const auth = useAuthStore()
 
 const items = computed<EntitySelectItem[]>(() => {
   const myId = auth.claims.value?.userId
-  return props.teams.map(t => ({
-    value: t.id,
-    label: teamDisplayName(t, t.members),
-    // include member usernames so search matches players too
-    search: t.members.map(m => m.username).join(' '),
-    preferred: myId != null && t.members.some(m => m.id === myId),
-    preferredLabel: 'Dein Team'
+  return props.players.map(p => ({
+    value: p.id,
+    label: p.username,
+    preferred: myId != null && p.id === myId,
+    preferredLabel: 'Du'
   }))
 })
 
@@ -44,10 +41,10 @@ const model = computed({
   <EntitySelect
     v-model="model"
     :items="items"
-    recent-key="recent-team-ids"
+    recent-key="recent-player-ids"
     :exclude="exclude"
     :placeholder="placeholder"
     :disabled="disabled"
-    icon="i-lucide-users"
+    icon="i-lucide-user"
   />
 </template>

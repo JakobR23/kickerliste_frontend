@@ -56,12 +56,7 @@ function getTeamName(teamId: number): string {
   return team ? teamDisplayName(team, team.members) : `Team #${teamId}`
 }
 
-const playerOptions = computed(() =>
-  (data.value?.users ?? []).map(u => ({
-    label: u.username,
-    value: u.id
-  }))
-)
+const players = computed(() => data.value?.users ?? [])
 
 // --- Tabs ---
 const activeTab = ref<'teams' | 'spieler'>('teams')
@@ -449,39 +444,29 @@ const playerFixturesSorted = computed(() =>
               label="Spieler A"
               name="playerA"
             >
-              <USelect
+              <PlayerSelect
                 v-model="playerAId"
-                :items="playerOptions"
-                placeholder="Spieler auswählen"
-                class="w-full"
+                :players="players"
+                :exclude="playerBId"
+                placeholder="Spieler A suchen…"
               />
             </UFormField>
             <UFormField
               label="Spieler B"
               name="playerB"
             >
-              <USelect
+              <PlayerSelect
                 v-model="playerBId"
-                :items="playerOptions"
-                placeholder="Spieler auswählen"
-                class="w-full"
+                :players="players"
+                :exclude="playerAId"
+                placeholder="Spieler B suchen…"
               />
             </UFormField>
           </div>
         </UCard>
 
-        <!-- Same player warning -->
-        <UAlert
-          v-if="samePlayer"
-          color="warning"
-          variant="soft"
-          icon="i-lucide-triangle-alert"
-          description="Bitte zwei verschiedene Spieler auswählen."
-          class="mb-4"
-        />
-
         <!-- Result -->
-        <template v-else-if="playerAId && playerBId && playerResult">
+        <template v-if="playerAId && playerBId && playerResult">
           <!-- No games -->
           <div
             v-if="playerResult.played === 0"

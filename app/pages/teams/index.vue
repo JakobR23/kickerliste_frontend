@@ -20,6 +20,12 @@ const newTeamName = ref('')
 const member1Id = ref<number | undefined>(undefined)
 const member2Id = ref<number | undefined>(undefined)
 const createLoading = ref(false)
+const createError = ref('')
+
+// At least one member is required (not enforced by the backend).
+const hasMember = computed(() =>
+  typeof member1Id.value === 'number' || typeof member2Id.value === 'number'
+)
 
 // Reset the form whenever the modal closes.
 watch(createModalOpen, (open) => {
@@ -27,11 +33,17 @@ watch(createModalOpen, (open) => {
     newTeamName.value = ''
     member1Id.value = undefined
     member2Id.value = undefined
+    createError.value = ''
   }
 })
 
 async function createTeam() {
+  if (!hasMember.value) {
+    createError.value = 'Bitte mindestens ein Mitglied auswählen.'
+    return
+  }
   createLoading.value = true
+  createError.value = ''
   try {
     const team = await api.createTeam({ name: newTeamName.value.trim() || null })
 
@@ -233,6 +245,7 @@ async function createTeam() {
             <UFormField
               label="Mitglied 1"
               name="member1"
+              required
             >
               <PlayerSelect
                 v-model="member1Id"
@@ -254,8 +267,16 @@ async function createTeam() {
             </UFormField>
           </div>
           <p class="text-xs text-muted">
-            Bis zu zwei Mitglieder – können auch später ergänzt werden.
+            Mindestens ein, höchstens zwei Mitglieder – weitere können später ergänzt werden.
           </p>
+
+          <UAlert
+            v-if="createError"
+            color="error"
+            variant="soft"
+            :description="createError"
+            icon="i-lucide-circle-alert"
+          />
         </div>
       </template>
       <template #footer>
@@ -269,6 +290,7 @@ async function createTeam() {
           </UButton>
           <UButton
             :loading="createLoading"
+            :disabled="!hasMember"
             @click="createTeam"
           >
             Erstellen

@@ -83,6 +83,8 @@ export interface UpdateUserRequest {
 
 export interface CreateTeamRequest {
   name?: string | null
+  /** optional user IDs to add as members (max 2, distinct, non-zero) */
+  members?: number[]
 }
 
 export interface UpdateTeamRequest {
